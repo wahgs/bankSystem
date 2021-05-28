@@ -1,0 +1,16 @@
+---: not done
+-x-: done
+-:- : work in progress
+
+
+  -:- get logins working:
+  ---   create account security func
+  -x- create mathematic 'algorithm' for encoding account values in accounts.txt
+  --- create deposit, withdraw, and view functions
+  --- create fake accounts with fake values, hash pwds, account security numbers
+  --- use mathematic 'algorithm' to hide account monetary values
+  --- learn how to use try/catch
+  --- debug
+
+once done:...
+maybe try using Flask?

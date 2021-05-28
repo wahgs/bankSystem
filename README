@@ -1,0 +1,5 @@
+5/25: Debugging Blocks, and Working on the main stack
+The entire concept of this project, is to host the theoretical banking system on a seperate outside server, with encrypted information, hashed accounts, etc. create a logins, encrypted messages between the server and computer, etc. The end goal is to make it so that nobody could access the information on the accounts, but the code is not intended to function as an ACTUAL banking system.
+From there I would like to create an actual website on the server as well. This will be an interesting project, and I can't wait to see where it goes.
+My personal end goals are to land a job in the cyber security field, and hopefully in the future find myself in a cybersecurity engineer. This little program will hopefully be good for my portfolio heading into colleges, and might  possibly be good for a first job? (It's really basic python so I'm not entirely sure that it would work like that, but we'll see.)
+plus the entire project is in python, and who in the right mind would run a real life website like this off of python... We'll see how it goes!
