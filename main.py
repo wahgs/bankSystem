@@ -18,6 +18,7 @@ while True:
             continue
         else:
             print("MainProgramErrorUsername")
+            f.disband()
     while True:
         if passkey:
             continue
@@ -27,3 +28,4 @@ while True:
             print("Thank you, " + str(accounts.ky.get('name')).title() + ".")
         else:
             print("MainProgramErrorPassword")
+            f.disband()
