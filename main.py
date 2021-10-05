@@ -1,22 +1,29 @@
-#main.py
+# main.py
 import accounts
 import f
-import hashlib
-import sys
-import time
-import username
 
 userkey = False
 passkey = False
 seckey = False
 acnum = False
 while True:
+    # Usernames --
     while True:
-        if userkey == True:
+        if userkey:
             continue
-        else:
+        elif not userkey:
             inp1 = input("Welcome, please type your username.")
             f.usernameFunction(str(inp1))
-            print("Welcome, " + accounts.ky[name] + ". Please enter your password:"
-            inp2 = input("")
-            f.passfunction(inp2)
+            print("Welcome, " + str(accounts.ky.get('name')).title() + ". Please enter your password:")
+            continue
+        else:
+            print("MainProgramErrorUsername")
+    while True:
+        if passkey:
+            continue
+        elif not passkey:
+            inp2: object = input(".")
+            f.passFunction(str(inp2))
+            print("Thank you, " + str(accounts.ky.get('name')).title() + ".")
+        else:
+            print("MainProgramErrorPassword")
