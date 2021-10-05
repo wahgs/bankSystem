@@ -1,0 +1,10 @@
+--- finish software side (more information in todo.txt)
+--- commit to github (v1.0)
+--- start production of server side
+	goals for server side:
+		hold all accounts in a .txt
+		have a program constantly running that can view, add accounts, and pull and update information in said .txt file
+		have a custom or rarely used number/hash encoder/decoder
+
+
+*once server side is completed, begin progress on making the application pretty*
