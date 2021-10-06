@@ -88,3 +88,11 @@ def passFunction(mainput):
                 int(passAttempts) + 1
                 print("Attempt " + str(passAttempts) + "/3. Please try again. (CaSe Sensitive)")
                 continue
+
+#Account Number Verification
+def accountNumberVerifier(mainput):
+    if str(mainput) == accounts.ky.get('accountnum'):
+        return True
+    elif str(mainput) is not accounts.ky.get('accountnum'):
+        print("Account number not matched, recieved: " + str(mainput) + ", instead of " + str(accounts.ky.get('accountnum')) + ".")
+        return False
