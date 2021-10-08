@@ -1,0 +1,5 @@
+Have the communications from client be compressed via a different encryption type than the server sides
+Have server side receive encrypted messages 
+
+broad idea: have three different encryption methods, and have a keyword with every sent message, this way the client side randomly picks one of *however many types of encryption there is* using import random, and then the server side decrypts each one and then whichever one presents the key word, server side uses, and then continues forward with information
+Add secret 'dev mode' where you can have the program log the communications, and run the server side on your own computer for testing and other things.
