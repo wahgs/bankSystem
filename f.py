@@ -31,7 +31,7 @@ def wip():
 
 # hasher
 def hashFunction(hashInput):
-    return str(hashlib.sha256(str(hashInput).encode('utf-8')).hexdigest)
+    return str(hashlib.sha256(str(hashInput).encode('utf-8')).hexdigest())
 
 
 # number encryption and decryption

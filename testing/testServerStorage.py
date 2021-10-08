@@ -1,12 +1,15 @@
 import json
+import bz2
+import testaccount
 
-data = {'people': []}
-data['people'].append({
-    'name': 'kyle',
-    'username': '547113e07fe001c3366023bfdd091303a1f28aefa6e982ad2681a4a9548dd0cc',
-    'password': '5527af79dba11bbe883d47586fb453cf6291e442dae011a40e410369f0958401',
-    'accountNumber': '294495'
-})
+kystring = json.dumps(testaccount.ky)
 
 with open('accounts.txt', 'w') as outfile:
     json.dump(data, outfile)
+def compressConversion(mainput):
+    compconvers = json.dumps(mainput)
+    bz2.compress(compconvers)
+
+#with open means "computer open, accounts.txt." as an outfile for the json.dump
+with open('accounts.txt', 'w') as outfile:
+        json.dump(compressConversion(testaccount.ky), outfile)
