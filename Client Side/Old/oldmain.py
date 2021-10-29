@@ -1,6 +1,6 @@
 # main.py
-import accounts
-import f
+import oldaccounts
+import oldf
 
 #Variable Declaration
 userkey = False
