@@ -21,7 +21,7 @@ def socketsetup():
         content=c.recv(100).decode()
         if not content:
             break
-        print(str(content))
+        print()
 
 def keyRequest(num):
     #make program request verification key from clientside

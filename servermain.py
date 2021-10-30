@@ -12,7 +12,5 @@ serversocket.socketsetup()
 #validates connection to clientside program
 serversocket.verify
 
-inp1 = input("firstinp")
-inp2 = input("secondinp")
+serversocket.clientinput()
 
-serverf.clientinput(inp1, inp2)

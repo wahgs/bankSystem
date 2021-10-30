@@ -5,5 +5,6 @@ import sys
 import time
 import f
 
-f.socketsetup('192.168.0.56', '613')
+print("Connecting to server...")
 
+f.socketsetup('192.168.0.56', '613')
