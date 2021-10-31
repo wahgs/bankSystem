@@ -5,6 +5,7 @@ import sys
 import time
 import main
 import hashlib
+import accounts
 
 s=socket.socket()
 def socketsetup(host, port):
@@ -36,3 +37,6 @@ def toomanyattempts(reason):
 def wip():
     print("This section of the code is known to be buggy and is a work in progress.")
 
+def verify(vKey):
+    if vKey is accounts.ky.get('secnum'):
+        print()
