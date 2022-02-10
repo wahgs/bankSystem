@@ -10,7 +10,6 @@ s=socket.socket()
 def socketsetup(host, port):
     try: s.connect((host,port))
     except: Exception, print("Couldn't connect to host.")
-    
 
 def sendinfo(param):
     s.send(param.encode('utf-8'))
@@ -35,4 +34,3 @@ def toomanyattempts(reason):
 
 def wip():
     print("This section of the code is known to be buggy and is a work in progress.")
-

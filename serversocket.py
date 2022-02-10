@@ -19,6 +19,8 @@ def socketsetup():
             continue
         elif not verify(c):
             disband("Key could not be located.")
+        else:
+            print('error in f.socketsetup')
         while True:
             c,addr=s.accept()
             print("Client connected" + addr)
@@ -28,10 +30,8 @@ def socketsetup():
                 break
             print()
 
-def keyRequest(num):
-    #make program request verification key from clientside
-
 def verify(verificationKey):
     #make program verify key that was sent from program
     if accounts.ky.get('seckey') is str(verificationKey):
         print("Security code, " + str(verificationKey) + "verified.")
+
