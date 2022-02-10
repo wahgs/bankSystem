@@ -35,4 +35,4 @@ def listen():
             c,addr=s.accept()
         except Exception as e:
             print("No response from client yet, waiting...")
-        continue
+        

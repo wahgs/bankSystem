@@ -42,14 +42,16 @@ def usrlogin(mainput):
     user = str(accounts.ky.get('userhash'))
     if hashFunction(mainput) == user:
         return True, user
+    elif mainput is user:
+        return True, user
     elif hashFunction(mainput) != user:
         return False
     else:
-        print("usrlogin failure")
+        print("serverf.usrlogin failure")
 
 def usernameFunction(mainput):
     usernameSigninAttempts = 0
-    if usernameSigninAttempts == 3:
+    if usernameSigninAttempts == 4:
         print("You have tried too many times, and reached the limit of " + str(usernameSigninAttempts) + "/3 tries.")
         toomanyattempts("Username")
     while usernameSigninAttempts < 4:
