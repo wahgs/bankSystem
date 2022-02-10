@@ -2,7 +2,6 @@ import hashlib
 import time
 import sys
 import socket
-import accounts
 import serversocket
 
 #functions "class'" for servermain.py developed by grizhe
@@ -30,7 +29,7 @@ def disband(reason):
     sys.exit()
 
 #Account Number Verification
-def accountNumberVerifier(mainput):
+#/def accountNumberVerifier(mainput):
     if str(mainput) == accounts.ky.get('accountnum'):
         return True
     elif str(mainput) is not accounts.ky.get('accountnum'):
