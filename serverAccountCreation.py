@@ -13,16 +13,24 @@ def create(username,password,email):
     while True:
         if accounts.usernames >= 3:
             purge()
-        verifiedChecks = 0
+        check = True
         for usrname in accounts.usernames:
             if usrname is username:
-                return False
+                socket.send(print("Username already in use, please try again."))
+                check = False
+                break
             else:
-                verifiedChecks + 1
-        for password
-
-        if verifiedChecks = 3:
+                continue  
+        for emailServer in accounts.emails:
+            if emailServer is email:
+                check = False
+                socket.send(print("Email is already in use, please try another email,  or try 'forgot password'."))
+                break
+            else:
+                continue
+        if check:
             accounts.append(username,password,email)
+            return True
 
 def purge():
     content = accounts
