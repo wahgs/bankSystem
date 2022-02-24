@@ -6,6 +6,18 @@ import serversocket
 
 #functions "class'" for servermain.py developed by grizhe
 
+
+
+
+
+
+#this entire section needs to be reviewed, as accounts.ky does not exist any longer.
+#update this section once you have completed the server socket implimentations
+#and the serveraccount / database implementations.
+
+
+
+
 def toomanyattempts(reason):
     print("Program shutting down due to too many attempts, reason:")
     if reason:

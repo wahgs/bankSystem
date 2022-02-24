@@ -1,6 +1,6 @@
-import serverf.py
-import servermain.py
-import serversocket.py
+import serverf
+import servermain
+import serversocket
 import gzip
 import time
 import sys
@@ -16,7 +16,7 @@ def create(username,password,email):
         check = True
         for usrname in accounts.usernames:
             if usrname is username:
-                socket.send(print("Username already in use, please try again."))
+                serversocket.send(print("Username already in use, please try again."))
                 check = False
                 break
             else:
@@ -24,7 +24,7 @@ def create(username,password,email):
         for emailServer in accounts.emails:
             if emailServer is email:
                 check = False
-                socket.send(print("Email is already in use, please try another email,  or try 'forgot password'."))
+                serversocket.send(print("Email is already in use, please try another email,  or try 'forgot password'."))
                 break
             else:
                 continue
