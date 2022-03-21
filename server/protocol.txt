@@ -21,6 +21,7 @@ if session
 3 - withdrawl
 4 - deposit (requires low verification as
 5 - bal
+6 - userCreator
 
 
 create session id encoding, and decrypt with sessionIdDecrypter(sessionID)

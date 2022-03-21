@@ -13,7 +13,9 @@ conn = mariadb.connect(
     user="root",
     password="a",
     host="localhost",
-    port=3306)
+    port=3306,
+    database='accounts'
+    )
 
 cur = conn.cursor()
 #-------------------------------
@@ -22,7 +24,7 @@ cur = conn.cursor()
 
 def findPos(mainput, type):
     cur.execute(
-        f"SELECT {type} FROM accounts.accounts"
+        f"SELECT {type} FROM accounts.accounts;"
     )
     variableFound = False
     while not variableFound:
@@ -77,7 +79,7 @@ def disband(reason):
     sys.exit()
 
     # Account Number Verification
-def verify(mainput):
+def verify(secnum):
     print('verify not setup' + mainput)
 
 
@@ -89,9 +91,25 @@ def bal():
     print('bal')
     #needs to call username and password function
 
-def deposit(usr, pswrd, secnum):
-    print('wip')
+def deposit(usr, pswrd, secnum, amount):
+    if verify(secnum):
+        cur.execute(
+        ""
+            )
+#-----------------------
+#figure out how to store a variable that is equal to
+#the position of the username and password provided
+#in the database
 
+
+
+
+
+def userCreator(username, password, secnum):
+    cur.execute(
+    "INSERT INTO accounts(username, password, secnum) VALUES ('" + username + "', '" + password + "', '" + int(secnum) + "');"
+    )
+    conn.commit()
 
 
 def msgHandler(msg):
@@ -113,3 +131,5 @@ def msgHandler(msg):
         deposit(username, password, query)
     elif command == '5':
         bal(username, password)
+    elif command == '5':
+        userCreator(username, password, secnum)
