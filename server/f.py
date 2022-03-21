@@ -1,6 +1,7 @@
 import hashlib
 import time
 import sys
+import random
 import mariadb
 import server.socket
 import socket
@@ -19,12 +20,22 @@ cur = conn.cursor()
 #begin functions
 #------------------------------
 
-def findPos(mainput):
-    #this will find the position of a username in the database, this will be used to verify
-    #the secnum
+def findPos(mainput, type):
+    cur.execute(
+        f"SELECT {type} FROM accounts.accounts"
+    )
+    variableFound = False
+    while not variableFound:
+        for variable in type:
+            if variable == mainput:
+                return variable
+                variableFound = True
+            else:
+                None
     positionFound = False
 
-def session()
+def sessionCreator(userpos, passpos):
+    print('h')
 
 
 def usernameFunction(mainput):
@@ -33,11 +44,10 @@ def usernameFunction(mainput):
     )
     for user in users:
         if user == mainput:
-            userposition = findPos(user)
+            userposition = findPos(user, 'username')
             return True,
     else:
         return False
-
 
 
 def passFunction(mainput):
@@ -80,7 +90,7 @@ def bal():
     #needs to call username and password function
 
 def deposit(usr, pswrd, secnum):
-
+    print('wip')
 
 
 
