@@ -24,3 +24,30 @@ if session
 
 
 create session id encoding, and decrypt with sessionIdDecrypter(sessionID)
+
+username, password, - hashed
+secnum, deposit, withdraw, read account number, - encrpyted utf8
+
+create a shitton of fake information to add into the database using a python program
+
+look into creating webpage-like / frontend / whatever its called, could be really cool
+
+
+-----------------------------------------this actually works---------------------------
+import mariadb
+
+conn = mariadb.connect(
+    user="root",
+    password="a",
+    host="localhost",
+    port=3306,
+    database="accounts")
+
+cur = conn.cursor()
+
+print(cur.execute("SELECT username FROM accounts"))
+for user in cur:
+    print(user)
+
+cur.execute("INSERT INTO accounts (username, password) VALUES ('joshw', 'lukrayden')")
+conn.commit()

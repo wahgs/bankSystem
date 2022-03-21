@@ -35,7 +35,7 @@ def findPos(mainput, type):
     positionFound = False
 
 def sessionCreator(userpos, passpos):
-    print('h')
+    print('session')
 
 
 def usernameFunction(mainput):
