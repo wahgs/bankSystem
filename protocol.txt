@@ -1,0 +1,26 @@
+
+command username password userquery secnumber
+
+socket -> server:
+1 - session or no session
+if session
+    2 = session id
+    3 = query
+
+2 = username
+3 = password
+4 = query
+5 = secnum (may or may not be presented)
+
+
+
+
+
+1 - f.toomanyattempts
+2, 3, 5 - f.verify ( requires username, passoword, and secnum to be verified by the program
+3 - withdrawl
+4 - deposit (requires low verification as
+5 - bal
+
+
+create session id encoding, and decrypt with sessionIdDecrypter(sessionID)
