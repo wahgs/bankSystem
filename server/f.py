@@ -2,6 +2,7 @@ import hashlib
 import time
 import sys
 import random
+from typing_extensions import TypeVarTuple
 import mariadb
 import server.socket
 import socket
@@ -22,69 +23,69 @@ cur = conn.cursor()
 #begin functions
 #------------------------------
 
-def sessionCreator():
+
+def sessionCreator(username):
     done = False
     counter = 0
-    session = str
+    session = ''
     while done == False:
-        if len(counter) != 9:
-            num = random.random()
+        if counter < 9:
+            num = random.randint(0,9)
             session = session + str(num)
             counter = counter + 1
-        elif len(counter) < 9:
-            #checks to see if the session id is already in the current database
-            sessions = cur.execute("SELECT ssn FROM sessions")
-            for ssn in sessions:
-                if ssn == session:
-                    done = False
-                else:
-                    done = True
-                    server.socket.sessions(session)
-                    continue
-        return session
+            continue
+        elif counter == 9:
+            cur.execute("INSERT INTO sessions (sessionID, username) values ('" + session "', '" + username");")
+        return session    
 
 
-def signin(username, password, secnum):
-    while attemptcounter <4:
-        pCheck = cur.execute("SELECT password From accounts where username='" + username + "';")
-        if password == pCheck:
-            UserSession = sessionCreator()
-        elif password != pCheck:
-            attemptcounter + 1
-            return 'wrong'
+def userCreator(usr,pwd):
+    #scans for the username
+    usrCheck = bool
+    pwdCheck = bool
+    error = False
+    users = cur.execute("SHOW username FROM accounts")
+    while not error: 
+        for user in users:
+            if user == usr:
+                error = True
+                break
+            else:
+                continue
+        if not error:
+            usrCheck = True
+        if usrCheck:
+            sesh = sessionCreator(usr)
+            secnum = secnumCreator(secnum)
+            cur.execute("INSERT INTO accounts(username, password, secnum, bal) values ('" + usr + "', '"
++ pwd + "', '" + secnum + "', '0');")
+            cur.execute("INSERT INTO sessions(sessionID, secnum) values ('" + sesh "', '" + secnum + "');")
+    if error:
+        return False
 
-
+        
 # hasher
 def hasher(hashInput):
     return str(hashlib.sha256(str(hashInput).encode('utf-8')).hexdigest())
 
+def verifier(sesh, sec):
+    sessionAttempt = cur.execute("SHOW username FROM sessions WHERE sessionID='" + sesh + "';")
+    accountAttempt = cur.execute("SHOW username FROM accounts WHERE secnum ='" + sec + "';")
+    if sessionAttempt == accountAttempt:
+        return True
+    else:
+        return False
 
-def disband(reason):
-    print("Program shutdown via internal kill switch.")
-    if reason:
-        print("Reason: " + str(reason))
-    elif not reason:
-        print("No reason provided by program")
-    time.sleep(3)
-    sys.exit()
 
-    # Account Number Verification
-def verify(secnum):
-    print('verify not setup' + secnum)
+def withdrawl(sesh, sec, amount):
+    print('withdrawl' + mainput)
 
-def transfer(session, secnum, user, amount):
-    print('hi')
-    #send a notification to someone
-
-def withdrawal(session, secnum, amount):
-    print('')
-
-def bal():
+def bal(sesh, sec):
     print('bal')
     #needs to call username and password function
 
-def deposit(usr, pswrd, secnum, amount):
-    if verify(secnum):
+def deposit(sesh, secnum, amount):
+    if verify(sesh, secnum):
         cur.execute(
         ""
             )
@@ -103,25 +104,24 @@ def userCreator(username, password, secnum):
     )
     conn.commit()
 
-
+messagesSent = 1
 def msgHandler(msg):
     #depending on the 1st letter(command) the string will be manipulated.
-    msg = msg.spplit()
+    msg = msg.split()
     if messagesSent == 1:
         username = msg[1]
         password = msg[2]
         userCreator(username, password)
-    else:
-        command = msg[1]
+    elif messagesSent > 2:
+        session = msg[1]
         secnum = msg[2]
-        session = msg[3]
-        userCommand = msg[4]
-        #continue search
+        command = msg[3]
+        usrcmd = msg[4]
         if command == '1':
-            withdrawal(session, secnum)
+            withdrawal(session, secnum, usrcmd)
         elif command == '2':
-            deposit(session)
-        elif command == '3':
             bal(session, secnum)
-        elif command == '4':
-            transfer(session, secnum)
+        elif command == '3':
+            deposit(session, usrcmd)
+        #add when ready add a transfer function.
+        
