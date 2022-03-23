@@ -49,6 +49,21 @@ cur = conn.cursor()
 print(cur.execute("SELECT username FROM accounts"))
 for user in cur:
     print(user)
-
+--------------------------------------------------------------------------------------------
 cur.execute("INSERT INTO accounts (username, password) VALUES ('joshw', 'lukrayden')")
 conn.commit()
+
+server protocol shall be set to only require the username, and password. The second function per user will then
+
+new login function will require only the username and password.
+
+once logged in, create and return a session to the user. 
+create a sessions table that stores the ip, username, and password
+
+the session will be randomly generated, (check to see if session id is already in use)
+
+create a function that declares if the user has done something, that will reset a timer,
+if user does not 
+
+
+---------------------
