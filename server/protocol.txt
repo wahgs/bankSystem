@@ -52,3 +52,13 @@ for user in cur:
 
 cur.execute("INSERT INTO accounts (username, password) VALUES ('joshw', 'lukrayden')")
 conn.commit()
+
+-------------------------------------------------------------
+
+sanitize usernames and passwords in client sides
+
+look into classes in py
+
+verify session through IP...
+
+transactions

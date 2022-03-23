@@ -14,10 +14,16 @@ addr = (server,port)
 format = 'utf-8'
 disconnect_message = '!disconnect'
 s.bind(addr)
+sessions = []
+
+def sessions(session):
+    sessions.append(session)
+
 
 #handles socket clients
 def handle_client(conn,addr):
     print(f"[new connection]: {addr} has connected.")
+    attempts = 0
     connected = True
     while connected:
         msg_length = conn.recv(header).decode(format)

@@ -6,7 +6,7 @@ import mariadb
 import server.socket
 import socket
 
-
+attemptcounter = 1
 #sets up mariadb
 import mariadb
 conn = mariadb.connect(
@@ -22,46 +22,36 @@ cur = conn.cursor()
 #begin functions
 #------------------------------
 
-def findPos(mainput, type):
-    cur.execute(
-        f"SELECT {type} FROM accounts.accounts;"
-    )
-    variableFound = False
-    while not variableFound:
-        for variable in type:
-            if variable == mainput:
-                return variable
-                variableFound = True
-            else:
-                None
-    positionFound = False
-
-def sessionCreator(userpos, passpos):
-    print('session')
-
-
-def usernameFunction(mainput):
-    users = cur.execute(
-        "SELECT username FROM accounts.accounts"
-    )
-    for user in users:
-        if user == mainput:
-            userposition = findPos(user, 'username')
-            return True,
-    else:
-        return False
+def sessionCreator():
+    done = False
+    counter = 0
+    session = str
+    while done == False:
+        if len(counter) != 9:
+            num = random.random()
+            session = session + str(num)
+            counter = counter + 1
+        elif len(counter) < 9:
+            #checks to see if the session id is already in the current database
+            sessions = cur.execute("SELECT ssn FROM sessions")
+            for ssn in sessions:
+                if ssn == session:
+                    done = False
+                else:
+                    done = True
+                    server.socket.sessions(session)
+                    continue
+        return session
 
 
-def passFunction(mainput):
-    passwords = cur.execute(
-        "SELECT password FROM accounts.accounts"
-    )
-    for password in passwords:
-        if password == mainput:
-            passPosition = findPos(password)
-            return True
-    else:
-        return False
+def signin(username, password, secnum):
+    while attemptcounter <4:
+        pCheck = cur.execute("SELECT password From accounts where username='" + username + "';")
+        if password == pCheck:
+            UserSession = sessionCreator()
+        elif password != pCheck:
+            attemptcounter + 1
+            return 'wrong'
 
 
 # hasher
@@ -80,12 +70,14 @@ def disband(reason):
 
     # Account Number Verification
 def verify(secnum):
-    print('verify not setup' + mainput)
+    print('verify not setup' + secnum)
 
+def transfer(session, secnum, user, amount):
+    print('hi')
+    #send a notification to someone
 
-
-def withdrawl(mainput):
-    print('withdrawl' + mainput)
+def withdrawal(session, secnum, amount):
+    print('')
 
 def bal():
     print('bal')
@@ -114,22 +106,22 @@ def userCreator(username, password, secnum):
 
 def msgHandler(msg):
     #depending on the 1st letter(command) the string will be manipulated.
-    msg = msg.split()
-    command = msg[0]
-    username = msg[1]
-    password = msg[2]
-    query = msg[3]
-    if msg[4]:
-        secnum = msg[4]
-    if command == '1':
-        (username, password, query)
-    elif command == '2':
-        verify(username, password, secnum)
-    elif command == '3':
-        withdrawl(username, password, query,)
-    elif command == '4':
-        deposit(username, password, query)
-    elif command == '5':
-        bal(username, password)
-    elif command == '5':
-        userCreator(username, password, secnum)
+    msg = msg.spplit()
+    if messagesSent == 1:
+        username = msg[1]
+        password = msg[2]
+        userCreator(username, password)
+    else:
+        command = msg[1]
+        secnum = msg[2]
+        session = msg[3]
+        userCommand = msg[4]
+        #continue search
+        if command == '1':
+            withdrawal(session, secnum)
+        elif command == '2':
+            deposit(session)
+        elif command == '3':
+            bal(session, secnum)
+        elif command == '4':
+            transfer(session, secnum)
