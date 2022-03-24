@@ -3,8 +3,8 @@ import time
 import sys
 import random
 import mariadb
-import server.socket
 import socket
+import serversocket
 
 attemptcounter = 1
 # sets up mariadb
