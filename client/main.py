@@ -30,9 +30,64 @@ def login():
     print('please insert your password')
     pwd = input(':')
     print('\n[LOGIN] Logging you in... please allow up to 5 seconds.')
-    send(f"1 " + hashed(usr) + " " + hashed(pwd))
+    send("1 " + hashed(usr) + " " + hashed(pwd))
     sleep(3)
-    if client.
+    try:
+        session  = int(client.recv)
+    except Exception as e:
+    if e:
+        print("Error in developing the session, please try again.")
+        f = False 
+
+
+def sqnc(inp):
+    inp = int(inp)
+    while True:
+        secnumRequired = False
+        if inp == 1:
+            print("How much would you like to withdrawal?")
+            secnumRequired = True
+        elif inp == 2:
+            break
+        elif inp == 3:
+            print("How much would you like to deposit?")
+            secnumRequired = True
+        inp1 = input('')
+        if secnumRequired:
+            print("Please insert your secnum")
+            secnum = input('')
+            message = inp + inp1 + secnum
+        else:
+            message = inp + inp1
+        send(message)
+        print("[Client]: Message Sent")
+
+    
+    
+    #print("How much would you like to deposit?")
+    #inp = input(':')
+    #try:
+    #    int(inp)
+   # except Exception as e:
+    #    if e:
+    #        print('{SYNTAX ERROR} Please insert a number.')
+    #    else:
+     #       print("Please insert your security number.")
+      #      secnum = input(":")
+       #     message = message + inp + ' ' + secnum
+        #    send(message)
+         #   print('[Client]: Message sent.')
+          #  sleep(2)
+           # while True:
+            #    if client.recv.decode(format) == 'done':
+             #       print("[SERVER] Success")
+              #  elif client.recv.decode(format) == 'error':
+               #     print("[Server] Server Erorr, please try again..")
+                #else:
+                 #   continue
+
+
+        
 
 
 def create():
@@ -44,10 +99,26 @@ def create():
 
 #login / create starter
 logOrCreate = input("Would you like to login, or create an account?(l/c)")
-while True:
+while f:
+    tryAgain = input("Would you like to try again, or logout? (T/L)").lower()
     if logOrCreate == 'l':
-        login()
+        if login():
+            if tryAgain == 't':
+                continue
+            elif tryAgain == 'l':
+                break                 
+        continue
     elif logOrCreate == 'c':
         create()
+        continue
     else:
         print("[erorr] improper syntax, try again.")
+    if f:
+        goahead = True
+print("Would you like to withdrawal, view balance, or deposit?")
+while goahead:
+    inp1 = input(':')
+    if int(inp1) == 1 or 2 or 3:
+        sqnc(str(inp1))
+    else:
+        print("[Client] Invalid Syntax, please")
