@@ -1,6 +1,41 @@
-print("Connecting to server...")
+import socket
+import hashlib
 
-#loop for attempting to connect to the server
+header = 64
+port = 3305
+format = 'UTF-8'
+disconnect_message = "!DISCONNECT"
+serverip = socket.gethostbyname(socket.gethostname())
+addr = (serverip, port)
 
+client = socket.socket(socket.AF_INET, socket,SOCK_STREAM)
+
+def hasher(inp):
+    return str(hashlib.sha256(str(inp).encode('utf-8')).hexdigest())
+
+def send(msg):
+    message = msg.encode(format)
+    msg_length = len(msg)
+    send_length = str(msg_length).encode(format)
+    send_length += b' ' * (header - len(send_length))
+    client.send(send_length)
+    client.send(send(message))
     
-#setup connection stuff once we have the server database information set up.
+def login():
+    print('login sqnc')
+
+def create():
+    print('creation sqnc')
+
+
+
+
+
+#login / create starter
+logOrCreate = input("Would you like to login, or create an account?(l/c)")
+if logOrCreate == 'l':
+    login()
+elif logOrCreate == 'c':
+    create()
+else:
+    
