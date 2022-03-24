@@ -3,7 +3,7 @@ import time
 import sys
 import random
 import mariadb
-import server.socket
+import serversocket
 import socket
 
 attemptcounter = 1
@@ -35,7 +35,7 @@ def sessionCreator(username):
             continue
         elif counter == 9:
             cur.execute("INSERT INTO sessions (sessionID, username) values ('" + session + "', '" + username + ");")
-        return session
+        return str(session)
 
 #creates a secnum for nem users
 def secnumCreator(sec):
@@ -89,6 +89,21 @@ def verify(sesh, sec):
     else:
         return False
 
+def verifyUser(usr):
+    try:
+        username = cur.execute(
+        "SHOW username FROM accounts WHERE username='" + usr + "';"
+    )
+    except Exception as e:
+    try:
+        password = cur.execute(
+        "SHOW password FROM accounts WHERE username='" + usr + "';"
+    )
+    except Exception as e:
+    if e:
+        return False
+    else:
+        return True
 
 def withdrawal(sesh, sec, amount):
     if verify(sesh, sec):
@@ -148,8 +163,12 @@ def msgHandler(msg):
     # depending on the 1st letter(command) the string will be manipulated.
     msg = msg.split()
     if messagesSent == 1:
+        logOrCreate = msg[0]
         username = msg[1]
         password = msg[2]
+        if logOrCreate == '1':
+            if verifyUser(username):
+                main.send(sessionCreator(username))
         userCreator(username, password)
     elif messagesSent > 2:
         session = msg[1]
