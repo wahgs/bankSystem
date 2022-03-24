@@ -1,5 +1,7 @@
 import socket
 import hashlib
+import time
+import sys
 
 header = 64
 port = 3305
@@ -19,10 +21,19 @@ def send(msg):
     send_length = str(msg_length).encode(format)
     send_length += b' ' * (header - len(send_length))
     client.send(send_length)
-    client.send(send(message))
+    client.send(str(message))
+    
     
 def login():
-    print('login sqnc')
+    print('please insert your username')
+    usr = input(':')
+    print('please insert your password')
+    pwd = input(':')
+    print('\n[LOGIN] Logging you in... please allow up to 5 seconds.')
+    send(f"1 " + hashed(usr) + " " + hashed(pwd))
+    sleep(3)
+    if client.
+
 
 def create():
     print('creation sqnc')
@@ -33,9 +44,10 @@ def create():
 
 #login / create starter
 logOrCreate = input("Would you like to login, or create an account?(l/c)")
-if logOrCreate == 'l':
-    login()
-elif logOrCreate == 'c':
-    create()
-else:
-    
+while True:
+    if logOrCreate == 'l':
+        login()
+    elif logOrCreate == 'c':
+        create()
+    else:
+        print("[erorr] improper syntax, try again.")
