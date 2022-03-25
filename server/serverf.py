@@ -36,7 +36,8 @@ def sessionCreator(username):
             continue
         elif counter == 9:
             cur.execute("INSERT INTO sessions (sessionID, username) values ('" + session + "', '" + username + ");")
-        return str(session)
+            serversocket.send('1 ' + str(session))
+        return True
 
 #creates a secnum for nem users
 def secnumCreator(sec):
@@ -73,6 +74,7 @@ def userCreator(usr, pwd):
             cur.execute("INSERT INTO accounts(username, password, secnum, bal) values ('" + usr + "', '"
                         + pwd + "', '" + secnum + "', '0');")
             cur.execute("INSERT INTO sessions(sessionID, secnum) values ('" + sesh + "', '" + secnum + "');")
+            serversocket.send(str(sesh) + ' ' + str(secnum))
     if error:
         return False
 
@@ -126,6 +128,17 @@ def bal(sesh, sec):
         return None
 
 
+def sessionEnder(username):
+    try:
+        cur.exeucte(
+        "DELETE FROM sessions WHERE username='" + username + "';")
+    except Exception as e:
+        print('')
+    if not e:
+        return True
+    if e:
+        return False
+
 def deposit(sesh, secnum, amount):
     complete = bool
     if verify(sesh, secnum):
@@ -163,23 +176,41 @@ messagesSent = 1
 def msgHandler(msg):
     # depending on the 1st letter(command) the string will be manipulated.
     msg = msg.split()
-    if messagesSent == 1:
+#create new functoion where 1 is requesting a session from a already logged user
+#2 is creating an account
+#3 is checking if the username is available
+#4-7 take the previous sequence, with section one being command, section 2 being
+#usrcmd, section 3 being session, section 4 being secnum
+    if int(msg[1]) == 1 or 2 or 3:
         logOrCreate = msg[0]
         username = msg[1]
         password = msg[2]
         if logOrCreate == '1':
             if verifyUser(username):
-                main.send(sessionCreator(username))
-        userCreator(username, password)
-    elif messagesSent > 2:
-        session = msg[1]
-        secnum = msg[2]
-        command = msg[3]
-        usrcmd = msg[4]
-        if command == '1':
+                serversocket.send(sessionCreator(username))
+        elif logOrCreate == '3':
+            if checkForUsername(username):
+                serversocket.send('good')
+            else:
+                serversocket.send('ngod')
+        elif logOrCreate == '2':
+            userCreator(username, password)
+    elif int(msg[1]) == 4 or 5 or 6:
+        command = msg[1]
+        usrcmd = msg[2]
+        session = msg[3]
+        secnum = msg[4]
+        if command == :
             withdrawal(session, secnum, usrcmd)
         elif command == '2':
             bal(session, secnum)
         elif command == '3':
             deposit(session, usrcmd)
+        else:
+            serversocket.send('error')
         # add when ready add a transfer function.
+    elif msg[1] == serversocket.disconnect_message:
+        if sessionEnder(msg[2]):
+            
+    else:
+        serversocket.send('error')
