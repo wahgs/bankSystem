@@ -181,25 +181,26 @@ def msgHandler(msg):
 #3 is checking if the username is available
 #4-7 take the previous sequence, with section one being command, section 2 being
 #usrcmd, section 3 being session, section 4 being secnum
-    if int(msg[1]) == 1 or 2 or 3:
-        logOrCreate = msg[0]
+    if int(msg[0]) == 1 or 2 or 3:
+        command = msg[0]
         username = msg[1]
         password = msg[2]
-        if logOrCreate == '1':
+        if command == '1':
             if verifyUser(username):
                 serversocket.send(sessionCreator(username))
-        elif logOrCreate == '3':
+        elif command == '3':
             if checkForUsername(username):
                 serversocket.send('good')
             else:
                 serversocket.send('ngod')
-        elif logOrCreate == '2':
+        elif command == '2':
             userCreator(username, password)
-    elif int(msg[1]) == 4 or 5 or 6:
-        command = msg[1]
-        usrcmd = msg[2]
-        session = msg[3]
-        secnum = msg[4]
+            
+    elif int(msg[0]) == 4 or 5 or 6:
+        command = msg[0]
+        usrcmd = msg[1]
+        session = msg[2]
+        secnum = msg[3]
         if command == :
             withdrawal(session, secnum, usrcmd)
         elif command == '2':
@@ -208,9 +209,9 @@ def msgHandler(msg):
             deposit(session, usrcmd)
         else:
             serversocket.send('error')
-        # add when ready add a transfer function.
+        #when ready add a transfer function.
     elif msg[1] == serversocket.disconnect_message:
         if sessionEnder(msg[2]):
-            
+            print('')      
     else:
         serversocket.send('error')

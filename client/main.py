@@ -66,16 +66,17 @@ def sqnc(inp):
         if inp == 1:
             print("How much would you like to withdrawal?")
             secnumRequired = True
+            inp1 = input('')
         elif inp == 2:
             break
         elif inp == 3:
             print("How much would you like to deposit?")
             secnumRequired = True
-        inp1 = input('')
+            inp1 = input('')
         if secnumRequired:
             print("Please insert your secnum")
             secnum = input('')
-            message = inp + inp1 + secnum
+            message = inp + inp1 + session + secnum
         else:
             message = inp + inp1
         send(message)
@@ -100,6 +101,7 @@ def create():
         while True:
             if client.recv(2048).decode(format) == 'good':
                 userCheck = 'good'
+                usr = True
                 break
             elif client.recv(2048).decode(format) == 'ngod':
                 print("[SERVER] : Username taken, please choose a different username")
@@ -115,7 +117,13 @@ def create():
             print(f"Please type your password again, {username}")
             inpP2 = input('')
             if inpP == inpP2:
-                send('2 ' + hasher(inpP) +)
+                pwd = True
+                break
+            else:
+                print('Error, passwords did not match, please try again.')
+                continue
+    if usr and pwd:
+        server.send('2 ' + username + ' ' + password)
 
 
 
@@ -123,23 +131,15 @@ def create():
 def start():
     if not loggedIn:
         logOrCreate = input("Would you like to login, or create an account?(l/c)")
-        while f:
-            tryAgain = input("Would you like to try again, or logout? (T/L)").lower()
-            if logOrCreate == 'l':
-                if login():
-                    if tryAgain == 't':
-                        continue
-                    elif tryAgain == 'l':
-                        break                 
-                continue
-            elif logOrCreate == 'c':
-                create()
-                continue
-            else:
-                print("[erorr] improper syntax, try again.")
-            if f:
-                goahead = True
-    if loggedIn:
+    while f:
+        if logOrCreate.lower() == 'l':
+            login()
+            break
+        elif logOrCreate.lower() == 'c':
+            create()
+        elif loggedIn:
+            sqnc()
+
 
 
 start()
