@@ -1,4 +1,7 @@
-import socket
+from http import server
+
+
+{import socket
 
 header = 64
 port = 3305
@@ -19,4 +22,10 @@ def send(msg):
 
 inp = input("What is the message that you would like to send?")
 send(inp)
-print("Sent.")
+print(f"Sent message, : {inp}.")
+sleep(2)
+servermsg = server.recv(2048)
+if servermsg is str:
+    print(f"[SERVER] :  {addr.recv(2048)")
+else:
+    print("Server did not send a message back please restart the program to send another message")
