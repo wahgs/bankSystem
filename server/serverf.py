@@ -5,7 +5,6 @@ import random
 import mariadb
 import serversocket
 import socket
-import serversocket
 
 attemptcounter = 1
 # sets up mariadb
@@ -98,11 +97,13 @@ def verifyUser(usr):
         "SHOW username FROM accounts WHERE username='" + usr + "';"
     )
     except Exception as e:
+        print(str(e))
     try:
         password = cur.execute(
         "SHOW password FROM accounts WHERE username='" + usr + "';"
     )
     except Exception as e:
+        print(str(e))
     if e:
         return False
     else:
@@ -200,7 +201,7 @@ def msgHandler(msg):
         usrcmd = msg[2]
         session = msg[3]
         secnum = msg[4]
-        if command == :
+        if command == '1':
             withdrawal(session, secnum, usrcmd)
         elif command == '2':
             bal(session, secnum)
@@ -211,6 +212,6 @@ def msgHandler(msg):
         # add when ready add a transfer function.
     elif msg[1] == serversocket.disconnect_message:
         if sessionEnder(msg[2]):
-            
+            cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
     else:
         serversocket.send('error')

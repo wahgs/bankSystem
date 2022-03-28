@@ -1,4 +1,4 @@
-import f
+import serverf
 import socket
 import threading
 
@@ -8,6 +8,7 @@ connected = bool
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 header = 64
+cheader = 2048
 port = 3305
 server =  socket.gethostbyname(socket.gethostname())
 addr = (server,port)
@@ -31,9 +32,7 @@ def handle_client(conn,addr):
             msg_length = int(msg_length)
             declaration = conn.recv(msg_length).decode(format)
             msg = (msg_length)
-            if msg == disconnect_message:
-                connected = False
-            server.f.msgHandler(msg)
+            serverf.msgHandler(msg)
     conn.close()
 
 #starts the server
@@ -50,6 +49,5 @@ start()
 
 def send(inp):
     # this is the sequence for allowing other classes to send messages to the client.
-    if connected:
-        c, addr = s.accept()
-        c.send(inp).encode('UTF-8')
+    message = inp.encode(format)
+    message += '' * (header -len(message))

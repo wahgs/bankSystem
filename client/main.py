@@ -3,6 +3,7 @@ import hashlib
 import time
 import sys
 
+username = ''
 header = 64
 port = 3305
 format = 'UTF-8'
@@ -10,10 +11,9 @@ disconnect_message = "!DISCONNECT " + username
 serverip = socket.gethostbyname(socket.gethostname())
 addr = (serverip, port)
 
-client = socket.socket(socket.AF_INET, socket,SOCK_STREAM)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 session = ''
-username = ''
 
 def hasher(inp):
     return str(hashlib.sha256(str(inp).encode('utf-8')).hexdigest())
@@ -115,7 +115,7 @@ def create():
             print(f"Please type your password again, {username}")
             inpP2 = input('')
             if inpP == inpP2:
-                send('2 ' + hasher(inpP) +)
+                send('2 ' + hasher(inpP) + ' ' + (hasher(username))
 
 
 
