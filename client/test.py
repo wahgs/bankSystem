@@ -24,6 +24,6 @@ print(f"Sent message, : {inp}.")
 time.sleep(2)
 servermsg = client.recv(2048)
 if servermsg is str:
-    print(f"[SERVER] :  {client.recv(2048)}")
+    print(f"[SERVER] :  {str(servermsg)}")
 else:
     print("Server did not send a message back please restart the program to send another message")
