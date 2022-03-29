@@ -188,10 +188,11 @@ def msgHandler(msg):
 #3 is checking if the username is available
 #4-7 take the previous sequence, with section one being command, section 2 being
 #usrcmd, section 3 being session, section 4 being secnum
+    e = False
     try:
         int(msg)
     except Exception as e:
-        None
+        e = True
     if not e:
         if int(msg[0]) == 1 or 2 or 3:
             command = msg[0]
