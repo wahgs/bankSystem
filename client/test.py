@@ -9,6 +9,7 @@ serverip = socket.gethostbyname(socket.gethostname())
 addr = (serverip, port)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(addr)
 
 def send(msg):
     message = msg.encode(format)
@@ -24,6 +25,6 @@ print(f"Sent message, : {inp}.")
 time.sleep(2)
 servermsg = client.recv(2048)
 if servermsg is str:
-    print(f"[SERVER] :  {servermsg}")
+    print(f"[SERVER] :  {str(servermsg)}")
 else:
     print("Server did not send a message back please restart the program to send another message")
