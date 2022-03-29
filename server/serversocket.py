@@ -1,4 +1,4 @@
-import serverf
+from audioop import add
 import socket
 import threading
 
@@ -11,15 +11,15 @@ header = 64
 cheader = 2048
 port = 3305
 server =  socket.gethostbyname(socket.gethostname())
-addr = (server,port)
+addr = (server, port)
 format = 'utf-8'
 disconnect_message = '!disconnect'
 s.bind(addr)
 
 
 #handles socket clients
-def handle_client(conn,addr):
-    print(f"[new connection]: {addr} has connected.")
+def handle_client(connection,address):
+    print(f"[new connection]: " + str(address) + " has connected.")
     attempts = 0
     connected = True
     while connected:
@@ -27,7 +27,7 @@ def handle_client(conn,addr):
         if msg_length:
             msg_length = int(msg_length)
             declaration = conn.recv(msg_length).decode(format)
-            msg = (msg_length)
+            msg = (declaration)
             serverf.msgHandler(msg)
     conn.close()
 
@@ -35,7 +35,7 @@ def handle_client(conn,addr):
 #starts the server
 def start():
     s.listen()
-    print(f"Server is listening on {addr}")
+    print(f"Server is listening on '{str(server)}:{str(port)}'.")
     while True:
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
