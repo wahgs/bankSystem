@@ -2,11 +2,11 @@ import serverf
 import socket
 import threading
 
+
 connected = bool
 # waits for client to connect, and then
 # establishes a fluid socket connection
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 header = 64
 cheader = 2048
 port = 3305
@@ -15,10 +15,6 @@ addr = (server,port)
 format = 'utf-8'
 disconnect_message = '!disconnect'
 s.bind(addr)
-sessions = []
-
-def sessions(session):
-    sessions.append(session)
 
 
 #handles socket clients
@@ -35,19 +31,23 @@ def handle_client(conn,addr):
             serverf.msgHandler(msg)
     conn.close()
 
+
 #starts the server
 def start():
     s.listen()
-    print(f"Server is listening on {server}")
+    print(f"Server is listening on {addr}")
     while True:
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         print(f"[connections] : {threading.activeCount() - 1}")
-print("[starting] : server is starting")
-start()
+        break
+    print("[starting] : server is starting")
+
 
 def send(inp):
     # this is the sequence for allowing other classes to send messages to the client.
     message = inp.encode(format)
     message += '' * (header -len(message))
+
+start()

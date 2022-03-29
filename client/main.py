@@ -33,30 +33,31 @@ def login():
     print('please insert your password')
     pwd = input(':')
     print('\n[LOGIN] Logging you in... please allow up to 5 seconds.')
-    send("1 " + hashed(usr) + " " + hashed(pwd))
+    send("1 " + hasher(usr) + " " + hasher(pwd))
     sys.sleep(3)
     try:
         session  = int(client.recv(2048))
     except Exception as e:
+        None
     if e:
         print("Error in developing the session, please try again.")
         f = False 
-
+    else:
+        None
 
 def select():
-print("Would you like to withdrawal, view balance, or deposit?")
-while goahead:
-    inp1 = input(':').lower()
-    if inp1 == 'withdrawal' or 'w' or 'with':
-        inp1 = 4
-    elif inp1 == 'view balance' or 'vb' or 'bal':
-        inp1 = 5
-    elif inp1 == 'deposit' or 'd' or 'dep':
-        inp1 = 6
-        
-    else:
-        print("[Client] Invalid Syntax, please try again.")
-        continue
+    print("Would you like to withdrawal, view balance, or deposit?")
+    while True:
+        inp1 = input(':').lower()
+        if inp1 == 'withdrawal' or 'w' or 'with':
+            inp1 = 4
+        elif inp1 == 'view balance' or 'vb' or 'bal':
+            inp1 = 5
+        elif inp1 == 'deposit' or 'd' or 'dep':
+            inp1 = 6
+        else:
+            print("[Client] Invalid Syntax, please try again.")
+            continue
 
 
 def sqnc(inp):
@@ -139,7 +140,6 @@ def start():
             create()
         elif loggedIn:
             sqnc()
-
 
 
 start()
