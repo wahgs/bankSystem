@@ -14,8 +14,9 @@ server =  socket.gethostbyname(socket.gethostname())
 addr = (server, port)
 format = 'utf-8'
 disconnect_message = '!disconnect'
-s.bind(addr)
 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(ADDR)
 
 #handles socket clients
 def handle_client(connection,address):
