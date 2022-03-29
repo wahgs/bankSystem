@@ -2,6 +2,7 @@ import hashlib
 import time
 import sys
 import random
+import serversocket
 import mariadb
 import socket
 
@@ -23,6 +24,10 @@ cur = conn.cursor()
 # begin functions
 # ------------------------------
 
+def error():
+    serversocket.send('error')
+    print("\n[Server] : Sent Error Message.")
+
 
 def sessionCreator(username):
     counter = 0
@@ -37,6 +42,7 @@ def sessionCreator(username):
             cur.execute("INSERT INTO sessions (sessionID, username) values ('" + session + "', '" + username + ");")
             serversocket.send('1 ' + str(session))
         return True
+
 
 #creates a secnum for nem users
 def secnumCreator(sec):
@@ -182,36 +188,43 @@ def msgHandler(msg):
 #3 is checking if the username is available
 #4-7 take the previous sequence, with section one being command, section 2 being
 #usrcmd, section 3 being session, section 4 being secnum
-    if int(msg[0]) == 1 or 2 or 3:
-        command = msg[0]
-        username = msg[1]
-        password = msg[2]
-        if command == '1':
-            if verifyUser(username):
-                serversocket.send(sessionCreator(username))
-        elif command == '3':
-            if verifyUser(username):
-                serversocket.send('good')
+    try:
+        int(msg)
+    except Exception as e:
+        None
+    if not e:
+        if int(msg[0]) == 1 or 2 or 3:
+            command = msg[0]
+            username = msg[1]
+            password = msg[2]
+            if command == '1':
+                if verifyUser(username):
+                    serversocket.send(sessionCreator(username))
+            elif command == '3':
+                if verifyUser(username):
+                    serversocket.send('good')
+                else:
+                    serversocket.send('ngod')
+            elif command == '2':
+                userCreator(username, password)
+        elif int(msg[1]) == 4 or 5 or 6:
+            command = msg[1]
+            usrcmd = msg[2]
+            session = msg[3]
+            secnum = msg[4]
+            if command == '1':
+                withdrawal(session, secnum, usrcmd)
+            elif command == '2':
+                bal(session, secnum)
+            elif command == '3':
+                deposit(session, usrcmd)
             else:
-                serversocket.send('ngod')
-        elif command == '2':
-            userCreator(username, password)
-    elif int(msg[1]) == 4 or 5 or 6:
-        command = msg[1]
-        usrcmd = msg[2]
-        session = msg[3]
-        secnum = msg[4]
-        if command == '1':
-            withdrawal(session, secnum, usrcmd)
-        elif command == '2':
-            bal(session, secnum)
-        elif command == '3':
-            deposit(session, usrcmd)
+                serversocket.send('error')
+            #when ready add a transfer function.
+        elif msg[1] == serversocket.disconnect_message:
+            if sessionEnder(msg[2]):
+                cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
         else:
             serversocket.send('error')
-        #when ready add a transfer function.
-    elif msg[1] == serversocket.disconnect_message:
-        if sessionEnder(msg[2]):
-            cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
-    else:
-        serversocket.send('error')
+    elif e:
+        error()

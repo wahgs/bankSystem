@@ -22,8 +22,7 @@ def send(msg):
 inp = input("What is the message that you would like to send?")
 send(inp)
 print(f"Sent message, : {inp}.")
-time.sleep(2)
-servermsg = client.recv(2048)
+servermsg = client.recv(2048).decode(format)
 if servermsg is str:
     print(f"[SERVER] :  {str(servermsg)}")
 else:

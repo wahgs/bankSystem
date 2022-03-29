@@ -8,7 +8,7 @@ connected = bool
 # establishes a fluid socket connection
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 header = 64
-cheader = 2048
+cHeader = 2048
 port = 3305
 server =  socket.gethostbyname(socket.gethostname())
 addr = (server, port)
@@ -23,13 +23,13 @@ def handle_client(connection,address):
     attempts = 0
     connected = True
     while connected:
-        msg_length = conn.recv(header).decode(format)
+        msg_length = connection.recv(header).decode(format)
         if msg_length:
             msg_length = int(msg_length)
-            declaration = conn.recv(msg_length).decode(format)
+            declaration = connection.recv(msg_length).decode(format)
             msg = (declaration)
             serverf.msgHandler(msg)
-    conn.close()
+    connection.close()
 
 
 #starts the server
@@ -48,6 +48,6 @@ def start():
 def send(inp):
     # this is the sequence for allowing other classes to send messages to the client.
     message = inp.encode(format)
-    message += '' * (header -len(message))
+    message += '' * (cHeader -len(message))
 
 start()
