@@ -1,5 +1,10 @@
 THIS IS A GRAND TODO LIST - THESE ARE ALL POSSIBLE UPDATES FOR THE PROGRAM.
 
+
+complete logging feature and debugging the program - for the love of god just debug it please
+
+
+
 - security feature that 'sanitizes' username and password inputs before entry:
     (removes special characters that could be used for injection, and just submits the strings entered before that)
     -have the client side send a signal in said message that notifies the server to log said input, with the ip adress, message, and username associated with the ip address.

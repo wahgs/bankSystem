@@ -1,4 +1,5 @@
 import hashlib
+from msilib.schema import Directory
 import time
 import sys
 import random
@@ -23,6 +24,17 @@ cur = conn.cursor()
 # -------------------------------
 # begin functions
 # ------------------------------
+directory = ''
+
+def logenable(path):
+    log = True
+    if path:
+        directory = path
+
+def log(inp):
+    print(inp)
+    with open(directory, w) as f:
+        f.write("\n" + inp)
 
 def error():
     serversocket.send('error')

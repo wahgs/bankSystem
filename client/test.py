@@ -18,12 +18,16 @@ def send(msg):
     send_length += b' ' * (header - len(send_length))
     client.send(send_length)
     client.send(message)
+    while True:
+        servermsg = client.recv(2048).decode(format)
+        if servermsg:
+            print("[Server] : " + servermsg + ".'")
+        elif servermsg == 'error':
+            print("[ERROR] invalid syntax, please refer to the protocol sheet. idiot.")
+        else:
+            print('no apparent server response.')
+
 
 inp = input("What is the message that you would like to send?")
-send(inp)
 print(f"Sent message, : {inp}.")
-servermsg = client.recv(2048).decode(format)
-if servermsg is str:
-    print(f"[SERVER] :  {str(servermsg)}")
-else:
-    print("Server did not send a message back please restart the program to send another message")
+send(inp)

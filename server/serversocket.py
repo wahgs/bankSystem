@@ -1,7 +1,7 @@
-from audioop import add
 import socket
 import threading
 import serverf
+import sys
 
 connected = bool
 # waits for client to connect, and then
@@ -22,7 +22,6 @@ s.bind(addr)
 #handles socket clients
 def handle_client(connection, address):
     print(f"[new connection]: " + str(address) + " has connected.")
-    attempts = 0
     connected = True
     while connected:
         msg_length = connection.recv(header).decode(format)
@@ -30,26 +29,33 @@ def handle_client(connection, address):
             msg_length = int(msg_length)
             declaration = connection.recv(msg_length).decode(format)
             msg = (declaration)
-            serverf.msgHandler(msg)
+            connection.send(serverf.msgHandler(msg).encode(format))
+
     connection.close()
 
 
 #starts the server
 def start():
     s.listen()
-    print(f"Server is listening on '{str(server)}:{str(port)}'.")
+    serverf.log(f"Server is listening on '{str(server)}:{str(port)}'.")
     while True:
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"[connections] : {threading.activeCount() - 1}")
+        serverf.log(f"[connections] : {threading.activeCount() - 1}")
+        
+
+while True:
+    logQ = input("Would you like the server to log to a file?")
+    if logQ.lower() == 'yes' or 'y':
+        print("Okay, the server will log to: [log.txt] in: /bankSystem/ ")
+        serverf.logenable()
+        serverf.log('Logging enabled.')
+    elif logQ.lower() == 'no' or 'n':
+        print("Okay, continuing.")
         break
-    print("[starting] : server is starting")
+    else:
+        print("Improper syntax, try again with 'yes', 'y', 'no' or 'n'")
 
-
-def send(inp):
-    # this is the sequence for allowing other classes to send messages to the client.
-    message = inp.encode(format)
-    message += '' * (cHeader -len(message))
 
 start()
