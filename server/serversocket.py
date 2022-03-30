@@ -16,10 +16,11 @@ format = 'utf-8'
 disconnect_message = '!disconnect'
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(ADDR)
+s.bind(addr)
+
 
 #handles socket clients
-def handle_client(connection,address):
+def handle_client(connection, address):
     print(f"[new connection]: " + str(address) + " has connected.")
     attempts = 0
     connected = True
