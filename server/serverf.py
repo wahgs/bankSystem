@@ -1,9 +1,7 @@
 import hashlib
-from msilib.schema import Directory
 import time
 import sys
 import random
-import serversocket
 import mariadb
 import socket
 
@@ -26,7 +24,7 @@ cur = conn.cursor()
 # ------------------------------
 directory = ''
 
-def logenable(path):
+def logEnable(path):
     log = True
     if path:
         directory = path
@@ -37,8 +35,8 @@ def log(inp):
         f.write("\n" + inp)
 
 def error():
-    serversocket.send('error')
     print("\n[Server] : Sent Error Message.")
+    return 'error'
 
 
 def sessionCreator(username):
