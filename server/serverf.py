@@ -208,12 +208,13 @@ def msgHandler(msg):
         password = msg[2]
         if command == '1':
             if verifyUser(username):
-                serversocket.send(sessionCreator(username))
+                seshcreate = sessionCreator(username)
+                serversocket.send(seshcreate)
         elif command == '3':
             if verifyUser(username):
                 serversocket.send('good')
             else:
-                serversocket.send('ngod')
+                serversocket.send('bad')
         elif command == '2':
             userCreator(username, password)
     elif int(msg[1]) == 4 or 5 or 6:
