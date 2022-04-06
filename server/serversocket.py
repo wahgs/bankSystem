@@ -3,6 +3,9 @@ import hashlib
 import time
 import sys
 import random
+import datetime
+import threading
+from tkinter import Y
 import mariadb
 import socket
 
@@ -38,17 +41,25 @@ cur = conn.cursor()
 # -------------------------------
 # begin functions
 # ------------------------------
-directory = ''
 
 
-def logEnable():
+def logEnable(param):
     log = True
+    today = datetime.date.today()
+    todayinfo = today.strftime("%d%m%Y")
+    if param != '':
+        logfilename = (param + str(todayinfo) + '.txt')
+    elif param == '':
+        logfilename = ('bankSystemLog' + str(todayinfo) + '.txt')
+    directory = logfilename
 
 
 def log(inp):
     print(inp)
-    with open(directory, w) as f:
-        f.write("\n" + inp)
+    #creates a log file with the date, and time    
+    f = open(directory, "a")
+    f.write(inp)
+    f.close
 
 def error():
     print("\n[Server] : Sent Error Message.")
@@ -189,7 +200,7 @@ def deposit(sesh, secnum, amount):
             )
 
 
-# -----------------------
+# -----------------------y
 # figure out how to store a variable that is equal to
 # the position of the username and password provided
 # in the database
@@ -252,6 +263,54 @@ def msgHandler(msg):
     else:
         return('error')
 
+
+def msgHandler(msg):
+    # depending on the 1st letter(command) the string will be manipulated.
+    msg = msg.split()
+#create new functoion where 1 is requesting a session from a already logged user
+#2 is creating an account
+#3 is checking if the username is available
+#4-7 take the previous sequence, with section one being command, section 2 being
+#usrcmd, section 3 being session, section 4 being secnum
+    try:
+        int(msg)
+    except Exception as e:
+        error()
+    if int(msg[0]) == 1 or 2 or 3:
+        command = msg[0]
+        username = msg[1]
+        password = msg[2]
+        if command == '1':
+            if verifyUser(username):
+                return sessionCreator(username)
+        elif command == '3':
+            if verifyUser(username):
+                return 'good'
+            else:
+                return 'ngod'
+        elif command == '2':
+            userCreator(username, password)
+    elif int(msg[1]) == 4 or 5 or 6:
+        command = msg[1]
+        usrcmd = msg[2]
+        session = msg[3]
+        secnum = msg[4]
+        if command == '1':
+            withdrawal(session, secnum, usrcmd)
+        elif command == '2':
+            bal(session, secnum)
+        elif command == '3':
+            deposit(session, usrcmd)
+        else:
+            return 'error'
+        #when ready add a transfer function.
+    elif msg[1] == disconnect_message:
+        if sessionEnder(msg[2]):
+            cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
+    else:
+        return 'error'
+
+
 #handles socket clients
 def handle_client(connection, address):
     print(f"[new connection]: " + str(address) + " has connected.")
@@ -262,7 +321,7 @@ def handle_client(connection, address):
             msg_length = int(msg_length)
             declaration = connection.recv(msg_length).decode(format)
             msg = (declaration)
-            handled = .msghandler(msg)
+            handled = msgHandler(msg)
             connection.send(handled.encode(format))
             print(f"[Server]: Sent: {handled} \n - Awaiting response...")
 
@@ -271,28 +330,31 @@ def handle_client(connection, address):
 
 #starts the server
 def start():
+    #queries user to log
     logQ()
+    #listens for connections
     s.listen()
-    serverf.log(f"Server is listening on '{str(server)}:{str(port)}'.")
+    log(f"Server is listening on '{str(server)}:{str(port)}'.")
     while True:
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        serverf.log(f"[connections] : {threading.activeCount() - 1}")
+        log(f"[connections] : {threading.activeCount() - 1}")
         
 
 def logQ():    
     while True:
         logQ = input("Would you like the server to log to a file?")
         if logQ.lower() == 'yes' or 'y':
-            print("Okay, the server will log to: [log.txt] in: /bankSystem/ ")
-            logEnable()
-            log('Logging enabled.')
+            logQ2 = input("What would you like to name the file? (We'll include the date for you)(Press ENTER to skip) ")
+            logEnable(logQ2)
+            print("Started logging at " + str(datetime.datetime.now()))
+            break
         elif logQ.lower() == 'no' or 'n':
             print("Okay, continuing.")
             break
         else:
-            print("Improper syntax, try again with 'yes', 'y', 'no' or 'n'")
-
-
+            print("Improper syntax, try again with 'yes', or 'no'")
+            continue
+#starts the main server listener
 start()
