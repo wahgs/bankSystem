@@ -14,6 +14,7 @@ addr = (serverip, port)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(addr)
 
+loggedIn = False
 session = ''
 
 def hasher(inp):
@@ -34,44 +35,21 @@ def login():
     print('please insert your password')
     pwd = input(':')
     print('\n[LOGIN] Logging you in... please allow up to 5 seconds.')
-    send("1 " + hasher(usr) + " " + hasher(pwd))
-    sys.sleep(3)
-    try:
-        session  = int(client.recv(2048))
-    except Exception as e:
-        None
-    if e:
-        print("Error in developing the session, please try again.")
-        f = False 
-    else:
-        None
+    end("1 " + hasher(usr) + " " + hasher(pwd))
+    if client.recv(2048).decode(format) == 'good':
+        print()
 
-def select():
-    print("Would you like to withdrawal, view balance, or deposit?")
-    while True:
-        inp1 = input(':').lower()
-        if inp1 == 'withdrawal' or 'w' or 'with':
-            inp1 = 4
-        elif inp1 == 'view balance' or 'vb' or 'bal':
-            inp1 = 5
-        elif inp1 == 'deposit' or 'd' or 'dep':
-            inp1 = 6
-        else:
-            print("[Client] Invalid Syntax, please try again.")
-            continue
-
-
-def sqnc(inp):
+def questions(inp):
     inp = int(inp)
     while True:
         secnumRequired = False
-        if inp == 1:
+        if inp == 4:
             print("How much would you like to withdrawal?")
             secnumRequired = True
             inp1 = input('')
-        elif inp == 2:
+        elif inp == 5:
             break
-        elif inp == 3:
+        elif inp == 6:
             print("How much would you like to deposit?")
             secnumRequired = True
             inp1 = input('')
@@ -82,14 +60,24 @@ def sqnc(inp):
         else:
             message = inp + inp1
         send(message)
-        print("[Client]: Message Sent")
-        if client.recv(2048).decode(format) == 'done':
-            print('[SERVER] Success')
-        elif client.recv(2048).decode(format) == 'erorr':
-            print('[SERVER] error')
-            print('[Client] Restarting process due to error, please check'
-            'that your input(s) are correct.')
-            select()
+        print("[Client]: Message sent to server")
+        servermsg = client.recv(2048).decode(format)
+        print(f"[Server]: {servermsg}")
+
+
+def select():
+    while True:
+        print("Would you like to withdrawal, view balance, or deposit?")
+        inp1 = input(':').lower()
+        if inp1 == 'withdrawal' or 'w' or 'with':
+            questions(3)
+        elif inp1 == 'view balance' or 'vb' or 'bal' or 'balance':
+            questions(5)
+        elif inp1 == 'deposit' or 'd' or 'dep':
+            questions(6)
+        else:
+            print("\n[Client] Invalid Syntax, please try again.")
+            continue
 
 
 p = True
@@ -125,6 +113,7 @@ def create():
                 print('Error, passwords did not match, please try again.')
                 continue
     if usr and pwd:
+        print("Account created, " + username.title() + ', ' + password(1) + '*'*(len(password)-1))
         server.send('2 ' + username + ' ' + password)
 
 
@@ -133,14 +122,16 @@ def create():
 def start():
     if not loggedIn:
         logOrCreate = input("Would you like to login, or create an account?(l/c)")
-    while f:
-        if logOrCreate.lower() == 'l':
-            login()
-            break
-        elif logOrCreate.lower() == 'c':
-            create()
-        elif loggedIn:
-            sqnc()
+        while f:
+            if logOrCreate.lower() == 'l':
+                login()
+                break
+            elif logOrCreate.lower() == 'c':
+                create()
+                logOrCreate = 'l'
+                continue   
+    elif loggedIn:
+        questions()
 
 
 start()
