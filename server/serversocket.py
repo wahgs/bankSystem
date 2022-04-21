@@ -42,23 +42,25 @@ cur = conn.cursor()
 # begin functions
 # ------------------------------
 
-
 def logEnable(param):
-    log = True
     today = datetime.date.today()
     todayinfo = today.strftime("%d%m%Y")
+    global logfilename
     if param != '':
         logfilename = (param + str(todayinfo) + '.txt')
     elif param == '':
-        logfilename = ('bankSystemLog' + str(todayinfo) + '.txt')
-    directory = logfilename
+        logfilename = ('bankSystemLog-' + str(todayinfo) + '.txt')
+    print("Logging enabled at filename: " + logfilename)
+    return logfilename
+
 
 
 def log(inp):
     print(inp)
-    #creates a log file with the date, and time    
-    f = open(directory, "a")
-    f.write(inp)
+    #creates a log file with the date, and time
+    global logfilename 
+    f = open(str(logfilename), "a")
+    f.write("\n" + inp)
     f.close
 
 def error():
@@ -91,7 +93,23 @@ def secnumCreator(sec):
             counter = counter + 1
             continue
         elif counter == 9:
+            log("Created secnum : " + str(secnum))
             return secnum
+
+def userCreator(username, password, secnm):
+    global secnum
+    #checks the secnum
+    if len(secnm) == 11:
+        secnum = secnm
+    else:
+        secnum = secnumCreator()
+    
+    cur.execute(
+        "INSERT INTO accounts(username, password, secnum) VALUES ('" + username + "', '" + password + "', '" + int(
+            secnm) + "');"
+    )
+    conn.commit()
+    
 
 
 def userCreator(usr, pwd):
@@ -140,13 +158,13 @@ def verifyUser(usr):
         "SHOW username FROM accounts WHERE username='" + usr + "';"
     )
     except Exception as e:
-        print(str(e))
+        log(str(e))
     try:
         password = cur.execute(
         "SHOW password FROM accounts WHERE username='" + usr + "';"
     )
     except Exception as e:
-        print(str(e))
+        log(str(e))
     if e:
         return False
     else:
@@ -177,7 +195,7 @@ def sessionEnder(username):
         cur.exeucte(
         "DELETE FROM sessions WHERE username='" + username + "';")
     except Exception as e:
-        print('')
+        log('')
     if not e:
         return True
     if e:
@@ -206,14 +224,6 @@ def deposit(sesh, secnum, amount):
 # in the database
 
 
-def userCreator(username, password, secnum):
-    cur.execute(
-        "INSERT INTO accounts(username, password, secnum) VALUES ('" + username + "', '" + password + "', '" + int(
-            secnum) + "');"
-    )
-    conn.commit()
-
-
 messagesSent = 1
 
 
@@ -233,6 +243,7 @@ def msgHandler(msg):
         command = msg[0]
         username = msg[1]
         password = msg[2]
+        secnum = msg[
         if command == '1':
             if verifyUser(username):
                 return(sessionCreator(username))
@@ -242,7 +253,7 @@ def msgHandler(msg):
             else:
                 return('ngod')
         elif command == '2':
-            userCreator(username, password)
+            userCreator(username, password, secnum)
     elif int(msg[1]) == 4 or 5 or 6:
         command = msg[1]
         usrcmd = msg[2]
@@ -313,7 +324,7 @@ def msgHandler(msg):
 
 #handles socket clients
 def handle_client(connection, address):
-    print(f"[new connection]: " + str(address) + " has connected.")
+    log(f"[new connection]: " + str(address) + " has connected.")
     connected = True
     while connected:
         msg_length = connection.recv(header).decode(format)
@@ -322,9 +333,9 @@ def handle_client(connection, address):
             declaration = connection.recv(msg_length).decode(format)
             msg = (declaration)
             handled = msgHandler(msg)
-            connection.send(handled.encode(format))
-            print(f"[Server]: Sent: {handled} \n - Awaiting response...")
-
+            handlede = handled.encode(format)
+            connection.send(handlede)
+            log(f'[{str(address)}]: recieved: "{msg}" | returned:"{str(handled)}"')
     connection.close()
 
 
@@ -339,7 +350,7 @@ def start():
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        log(f"[connections] : {threading.activeCount() - 1}")
+        log(f"[connections] : {threading.active_count() - 1}")
         
 
 def logQ():    
