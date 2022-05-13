@@ -1,0 +1,10 @@
+
+Server is listening on '172.23.0.1:3305'.
+[new connection]: ('172.23.0.1', 52715) has connected.
+[connections] : 1
+You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'username FROM accounts WHERE username='grizhe'' at line 1
+You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'password FROM accounts WHERE username='grizhe'' at line 1
+[new connection]: ('172.23.0.1', 59237) has connected.
+[connections] : 1
+Server is listening on '172.23.0.1:3305'.
+[connections] : 1 ('172.23.0.1', 54986) has connected.

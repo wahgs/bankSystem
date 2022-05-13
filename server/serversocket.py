@@ -1,5 +1,6 @@
 from genericpath import exists
 import hashlib
+from ssl import SSLSession
 import time
 import sys
 import random
@@ -7,8 +8,11 @@ import datetime
 import threading
 from tkinter import Y
 import mariadb
+import re
+import string
 import socket
 
+#if it doesnt work you need to pip install mariadb :)
 
 connected = bool
 # waits for client to connect, and then
@@ -64,28 +68,45 @@ def log(inp):
     f.close
 
 def error():
-    print("\n[Server] : Sent Error Message.")
+    log("\n[Server] : Sent Error Message.")
     return 'error'
 
 
 def sessionCreator(username):
     counter = 0
     session = ''
-    while True:
+    attempts = 1
+    working = True
+    while working:
         if counter < 9:
             num = random.randint(0, 9)
             session = session + str(num)
             counter = counter + 1
             continue
-        elif counter == 9:
-            cur.execute("INSERT INTO sessions (sessionID, username) values ('" + session + "', '" + username + ");")
-            return('1 ' + str(session))
+        if counter == 9:
+            cur.execute("SELECT sessionID FROM sessions WHERE sessionID=" + session)
+            seshchecker = cur.fetchone()
+            seshchecker = str(seshchecker)
+            print(f"seshchecker: {seshchecker}")
+            if seshchecker != 'None':
+                attempts = attempts + 1
+                session = ''
+                counter = 0
+                continue
+            elif seshchecker == 'None':
+                sql = "INSERT INTO sessions (sessionID, username) VALUES (?, ?)"
+                data = (session, username)
+                cur.execute(sql, data)
+                conn.commit()
+                print(f"commited, {data}. It took {attempts} attempts.")
+                break
 
 
 #creates a secnum for nem users
 def secnumCreator(sec):
     counter = 0
     secnum = ''
+    attempts = 1
     while True:
         if counter < 9:
             num = random.randint(0, 9)
@@ -93,51 +114,33 @@ def secnumCreator(sec):
             counter = counter + 1
             continue
         elif counter == 9:
-            log("Created secnum : " + str(secnum))
-            return secnum
-
-def userCreator(username, password, secnm):
-    global secnum
-    #checks the secnum
-    if len(secnm) == 11:
-        secnum = secnm
-    else:
-        secnum = secnumCreator()
-    
-    cur.execute(
-        "INSERT INTO accounts(username, password, secnum) VALUES ('" + username + "', '" + password + "', '" + int(
-            secnm) + "');"
-    )
-    conn.commit()
-    
-
-
-def userCreator(usr, pwd):
-    # scans for the username
-    usrCheck = bool
-    pwdCheck = bool
-    error = False
-    users = cur.execute("SHOW username FROM accounts")
-    while not error:
-        for user in users:
-            if user == usr:
-                error = True
-                break
-            else:
+            cur.execute("SELECT secnum FROM bankSystem WHERE secnum=" + secnum + ";")
+            secnumchecker = cur.fetchone()
+            secnumchecker = str(secnumchecker)
+            if secnumchecker != 'None':
                 continue
-        if not error:
-            usrCheck = True
-        if usrCheck:
-            sesh = sessionCreator(usr)
-            secnum = secnumCreator(secnum)
-            cur.execute("INSERT INTO accounts(username, password, secnum, bal) values ('" + usr + "', '"
-                        + pwd + "', '" + secnum + "', '0');")
-            cur.execute("INSERT INTO sessions(sessionID, secnum) values ('" + sesh + "', '" + secnum + "');")
-            
-            return(str(sesh) + ' ' + str(secnum))
-    if error:
-        return False
+                attempts = attempts + 1
+            elif secnumchecker == 'None':
+                log("Created secnum : " + str(secnum) + ", took " + str(attempts) + " attempts.")
+                return secnum 
 
+def userCreator(username, password, secnum):
+    #checks the secnum
+    if secnum == '' or len(str(secnum)) != 9:
+        secnum1 = secnumCreator(username)
+        created = True
+    elif len(str(secnum)) == 9:
+        secnum = secnum
+        not created
+    sql = "INSERT INTO bankSystem (username, password, secnum) VALUES (?, ?, ?)"
+    data = (username, password, secnum1)
+    cur.execute(sql, data)
+    conn.commit()
+    if created:
+        log(f"created account {str(username).title()}. Created the secnum {str(secnum1)} for the account.")
+    elif not created:
+        log(f"created account {str(username).title()}. With the secnum{str(secnum1)}")
+    return True
 
 # hasher
 def hasher(hashInput):
@@ -145,84 +148,95 @@ def hasher(hashInput):
 
 
 def verify(sesh, sec):
-    sessionAttempt = cur.execute("SHOW username FROM sessions WHERE sessionID='" + sesh + "';")
-    accountAttempt = cur.execute("SHOW username FROM accounts WHERE secnum ='" + sec + "';")
-    if sessionAttempt == accountAttempt:
+    cur.execute("SELECT username FROM sessions WHERE sessionID='" + sesh + "';")
+    sessionCheck = cur.fetchone()
+    cur.execute("SELECT username FROM bankSystem WHERE secnum ='" + sec + "';")
+    accountsCheck = cur.fetchone()
+    if str(sessionCheck) == str(accountsCheck):
         return True
-    else:
+    elif str(sessionCheck) != str(accountsCheck):
         return False
 
+
 def verifyUser(usr):
-    try:
-        username = cur.execute(
-        "SHOW username FROM accounts WHERE username='" + usr + "';"
-    )
-    except Exception as e:
-        log(str(e))
-    try:
-        password = cur.execute(
-        "SHOW password FROM accounts WHERE username='" + usr + "';"
-    )
-    except Exception as e:
-        log(str(e))
-    if e:
-        return False
-    else:
+    cur.execute("SELECT username FROM bankSystem WHERE username='" + usr + "';")
+    usrcheck = cur.fetchone()
+    if usrcheck == 'None':
         return True
+    if usrcheck != 'None':
+        return False
+
+#=============== COMPELTE CODE LINE ==========================================
+#everything below this line is not completely checked, and needs to be checked! :D
+
+def strip(param):
+    paramstr = str(param)
+    PERMITTED_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-" 
+    answer = "".join(c for c in paramstr if c in PERMITTED_CHARS)
+    return answer
 
 def withdrawal(sesh, sec, amount):
     if verify(sesh, sec):
-        currentAmount = cur.execute("SELECT bal FROM accounts WHERE secnum='" + sec + "';")
-        newAmount = int(currentAmount) - int(amount)
-        cur.execute("UPDATE accounts SET bal = '" + newAmount + "' WHERE secnum=" + sec + "';")
-        test = cur.execute("SELECT bal FROM accounts WHERE secnum='" + sec + "';")
-        if test == newAmount:
+        cur.execute("SELECT username FROM sessions WHERE sessionID=" + sesh + ";")
+        username = cur.fetchone()
+        username = str(username)
+        username = strip(username)
+        cur.execute("SELECT bal FROM bankSystem WHERE username='" + username + "';")
+        currentBal = cur.fetchone()
+        currentBal = strip(currentBal)
+        oldBal = currentBal
+        currentBal = int(currentBal) - int(amount)
+        currentBal = str(currentBal)
+        cur.execute("UPDATE bankSystem SET bal=" + currentBal + " WHERE username='" + username + "';")
+        conn.commit()
+        cur.execute("SELECT bal FROM bankSystem WHERE username='" + username + "';")
+        check = cur.fetchone()
+        check = strip(check)
+        if check == currentBal:
+            log(f"Updated {username.title()} balance from {oldBal} to {currentBal}.")
             return True
-        else:
-            return
-
+        elif check != currentBal:
+            print('error...')
+            return False
 
 def bal(sesh, sec):
     if verify(sesh, sec):
-        balance = ("SELECT bal FROM accounts WHERE secnum='" + sec + "';")
+        print('verified, '+ sesh + ', ' + sec)
+        cur.execute("SELECT bal FROM bankSystem WHERE secnum='" + sec + "';")
+        balance = cur.fetchone()
+        balance = strip(balance)
+        log(f"User: {sesh} requested balance, recieved: {balance}")
         return balance
     else:
         return None
 
 
 def sessionEnder(username):
-    try:
-        cur.exeucte(
-        "DELETE FROM sessions WHERE username='" + username + "';")
-    except Exception as e:
-        log('')
-    if not e:
-        return True
-    if e:
-        return False
+    cur.execute("DELETE FROM sessions WHERE username='" + username + "';")
+    conn.commit()
+    return True
+
 
 def deposit(sesh, secnum, amount):
     complete = bool
     if verify(sesh, secnum):
-        currentAmount = cur.execute("SELECT bal FROM accounts WHERE secnum='" + secnum + "';")
-        combinedAmount = int(currentAmount) + int(amount)
-        cur.execute(
-            "UPDATE accounts SET bal = '" + combinedAmount + "' WHERE secnum='" + secnum + "';"
-        )
-        checkAmount = cur.execute("SELECT bal FROM accounts WHERE secnum='" + secnum + "';")
-        if checkAmount == combinedAmount:
-            return str(checkAmount)
-        else:
-            cur.execute(
-                "UPDATE accounts SET bal = '" + currentAmount + "' WHERE secnum='" + secnum + "';"
-            )
+        cur.execute("SELECT bal FROM bankSystem WHERE secnum=" + secnum + ';')
+        bal = cur.fetchone()
+        bal = strip(bal)
+        newBal = int(bal) + int(amount)
+        newBal = str(newBal)
+        cur.execute("UPDATE bal FROM bankSystem WHERE secnum=" + secnum + ";")
+        conn.commmit()
+        check = cur.execute("SELECT bal FROM bankSytem WHERE secnum="  + secnum + ';')
+        check = strip(check)
+        if check == newBal:
+            log(f"Changed balance of {sesh} from {bal} to {check}")
+            return True
+        elif check != newBal:
+            log(f"[FAILED]: Changing balance of {sesh} from {bal} to {check}.")
+            return False
 
-
-# -----------------------y
-# figure out how to store a variable that is equal to
-# the position of the username and password provided
-# in the database
-
+# ------------------------------
 
 messagesSent = 1
 
@@ -235,15 +249,11 @@ def msgHandler(msg):
 #3 is checking if the username is available
 #4-7 take the previous sequence, with section one being command, section 2 being
 #usrcmd, section 3 being session, section 4 being secnum
-    try:
-        int(msg)
-    except Exception as e:
-        error()
     if int(msg[0]) == 1 or 2 or 3:
         command = msg[0]
         username = msg[1]
         password = msg[2]
-        secnum = msg[
+        secnum = msg[3]
         if command == '1':
             if verifyUser(username):
                 return(sessionCreator(username))
@@ -251,7 +261,7 @@ def msgHandler(msg):
             if verifyUser(username):
                 return('good')
             else:
-                return('ngod')
+                return('nope')
         elif command == '2':
             userCreator(username, password, secnum)
     elif int(msg[1]) == 4 or 5 or 6:
@@ -273,53 +283,6 @@ def msgHandler(msg):
             cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
     else:
         return('error')
-
-
-def msgHandler(msg):
-    # depending on the 1st letter(command) the string will be manipulated.
-    msg = msg.split()
-#create new functoion where 1 is requesting a session from a already logged user
-#2 is creating an account
-#3 is checking if the username is available
-#4-7 take the previous sequence, with section one being command, section 2 being
-#usrcmd, section 3 being session, section 4 being secnum
-    try:
-        int(msg)
-    except Exception as e:
-        error()
-    if int(msg[0]) == 1 or 2 or 3:
-        command = msg[0]
-        username = msg[1]
-        password = msg[2]
-        if command == '1':
-            if verifyUser(username):
-                return sessionCreator(username)
-        elif command == '3':
-            if verifyUser(username):
-                return 'good'
-            else:
-                return 'ngod'
-        elif command == '2':
-            userCreator(username, password)
-    elif int(msg[1]) == 4 or 5 or 6:
-        command = msg[1]
-        usrcmd = msg[2]
-        session = msg[3]
-        secnum = msg[4]
-        if command == '1':
-            withdrawal(session, secnum, usrcmd)
-        elif command == '2':
-            bal(session, secnum)
-        elif command == '3':
-            deposit(session, usrcmd)
-        else:
-            return 'error'
-        #when ready add a transfer function.
-    elif msg[1] == disconnect_message:
-        if sessionEnder(msg[2]):
-            cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
-    else:
-        return 'error'
 
 
 #handles socket clients
