@@ -130,8 +130,8 @@ def userCreator(username, password, secnum):
         secnum1 = secnumCreator(username)
         created = True
     elif len(str(secnum)) == 9:
-        secnum = secnum
-        not created
+        secnum1 = secnum
+        created = False
     sql = "INSERT INTO bankSystem (username, password, secnum) VALUES (?, ?, ?)"
     data = (username, password, secnum1)
     cur.execute(sql, data)
@@ -139,7 +139,7 @@ def userCreator(username, password, secnum):
     if created:
         log(f"created account {str(username).title()}. Created the secnum {str(secnum1)} for the account.")
     elif not created:
-        log(f"created account {str(username).title()}. With the secnum{str(secnum1)}")
+        log(f"created account {str(username).title()}. With the secnum: {str(secnum1)}")
     return True
 
 # hasher
@@ -194,10 +194,10 @@ def withdrawal(sesh, sec, amount):
         check = strip(check)
         if check == currentBal:
             log(f"Updated {username.title()} balance from {oldBal} to {currentBal}.")
-            return True
+            return f"Updated {username.title()} balance from {oldBal} to {currentBal}."
         elif check != currentBal:
-            print('error...')
-            return False
+            log(f"error.")
+            return f"error."
 
 def bal(sesh, sec):
     if verify(sesh, sec):
@@ -206,9 +206,9 @@ def bal(sesh, sec):
         balance = cur.fetchone()
         balance = strip(balance)
         log(f"User: {sesh} requested balance, recieved: {balance}")
-        return balance
+        return f"User: {sesh} requested balance, recieved: {balance}"
     else:
-        return None
+        return "error"
 
 
 def sessionEnder(username):
@@ -231,19 +231,19 @@ def deposit(sesh, secnum, amount):
         check = strip(check)
         if check == newBal:
             log(f"Changed balance of {sesh} from {bal} to {check}")
-            return True
+            return f"Changed balance of {sesh} from {bal} to {check}"
         elif check != newBal:
             log(f"[FAILED]: Changing balance of {sesh} from {bal} to {check}.")
-            return False
+            return f"[FAILED]: Changing balance of {sesh} from {bal} to {check}."
 
 # ------------------------------
 
 messagesSent = 1
 
 
-def msgHandler(msg):
+def msgHandler(mesg): 
     # depending on the 1st letter(command) the string will be manipulated.
-    msg = msg.split()
+    msg = mesg.split()
 #create new functoion where 1 is requesting a session from a already logged user
 #2 is creating an account
 #3 is checking if the username is available
@@ -256,7 +256,10 @@ def msgHandler(msg):
         secnum = msg[3]
         if command == '1':
             if verifyUser(username):
-                return(sessionCreator(username))
+                func = sessionCreator(username)
+                return(func)
+            else:
+                return("Failed to verify username.")
         elif command == '3':
             if verifyUser(username):
                 return('good')
@@ -280,7 +283,7 @@ def msgHandler(msg):
         #when ready add a transfer function.
     elif msg[1] == disconnect_message:
         if sessionEnder(msg[2]):
-            cur.execute("DELETE FROM sessions WHERE username='" + str(msg[2]) + "';")
+            cur.execute("DELETE FROM sessions WHERE username=?", msg[2])
     else:
         return('error')
 
@@ -289,16 +292,18 @@ def msgHandler(msg):
 def handle_client(connection, address):
     log(f"[new connection]: " + str(address) + " has connected.")
     connected = True
-    while connected:
-        msg_length = connection.recv(header).decode(format)
-        if msg_length:
-            msg_length = int(msg_length)
-            declaration = connection.recv(msg_length).decode(format)
-            msg = (declaration)
-            handled = msgHandler(msg)
-            handlede = handled.encode(format)
-            connection.send(handlede)
-            log(f'[{str(address)}]: recieved: "{msg}" | returned:"{str(handled)}"')
+    while True:
+        if connected:
+            msg = connection.recv(header).decode(format)
+            log(f"[{address}]: '{str(msg)}'")
+            msg = msg.rstrip()
+            print("stripped: ..." + msg + "....")
+            h = msgHandler(msg)
+            connection.send(bytes(h.encode(format)))
+            log(f'[{str(address)}]: sent: "{msg}" | returned:"{str(h)}"')
+            break
+        else:
+            continue
     connection.close()
 
 

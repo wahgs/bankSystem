@@ -1,7 +1,7 @@
 import socket
 import time
 
-header = 64
+header = 2048
 port = 3305
 format = "utf-8"
 disconnect_message = "!DISCONNECT"
@@ -12,11 +12,11 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(addr)
 
 def send(msg):
+    print(msg)
     message = msg.encode(format)
-    msg_length = len(msg)
-    send_length = str(msg_length).encode(format)
-    send_length += b' ' * (header - len(send_length))
-    client.send(send_length)
+    print('encoded: ' + str(message))
+    message += b' ' + (header - len(message))
+    print('sending: ' + str(message))
     client.send(message)
     while True:
         servermsg = client.recv(2048).decode(format)
@@ -29,5 +29,4 @@ def send(msg):
 
 
 inp = input("What is the message that you would like to send?")
-print(f"Sent message, : {inp}.")
 send(inp)

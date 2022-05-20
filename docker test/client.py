@@ -26,6 +26,5 @@ def send(msg):
             break
         else:
             continue
-
-inp = input("What message would you like to send to the server?\n[Message]:")
-send(inp)
+inp = input('message: ')
+send(inp) 
