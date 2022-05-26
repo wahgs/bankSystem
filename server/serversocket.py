@@ -175,6 +175,16 @@ def strip(param):
     answer = "".join(c for c in paramstr if c in PERMITTED_CHARS)
     return answer
 
+#checks that the password correlated to the entered username is correct.
+def verifyLogin(usr, pwd):
+    if verifyUser(usr):
+        cur.execute("SELECT password FROM bankSystem WHERE username='" + str(usr) + "';")
+        sqlpwd = cur.fetchone()
+        if sqlpwd == pwd:
+            return True
+        elif sqlpwd != pwd:
+            return False
+
 def withdrawal(sesh, sec, amount):
     if verify(sesh, sec):
         cur.execute("SELECT username FROM sessions WHERE sessionID=" + sesh + ";")
@@ -255,18 +265,17 @@ def msgHandler(mesg):
         password = msg[2]
         secnum = msg[3]
         if command == '1':
-            if verifyUser(username):
+            if verifyLogin(username):
                 func = sessionCreator(username)
                 return(func)
             else:
                 return("Failed to verify username.")
         elif command == '3':
-            if verifyUser(username):
-                return('good')
-            else:
-                return('nope')
+            vUser = verifyUser(username)
+            return(str(vUser))
         elif command == '2':
-            userCreator(username, password, secnum)
+            var = userCreator(username, password, secnum)
+            return(var)
     elif int(msg[1]) == 4 or 5 or 6:
         command = msg[1]
         usrcmd = msg[2]
