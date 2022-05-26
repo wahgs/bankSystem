@@ -62,8 +62,19 @@ def login():
         elif servmsg == 'True':
             print(f"Alright, please enter your password.")
             break
+    pwdattempts = 0
+    while pwdattempts < 3:
         password = input('')
         password = hasher(password)
+        pwdattempts = pwdattempts + 1
+        send(f"2 {username} {password}")
+        if servmsg:
+            servmsg = str(servmsg)
+            servmsg.split()
+            servmsg[0] = key
+        print("Please enter your")
+        
+        
         
         
 
