@@ -72,7 +72,8 @@ def login():
             servmsg = str(servmsg)
             servmsg.split()
             servmsg[0] = key
-        print("Please enter your")
+        print("Please enter your security number ( 9 digit code)")
+    scgh
         
         
         
