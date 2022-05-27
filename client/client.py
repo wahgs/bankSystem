@@ -47,7 +47,11 @@ def send(msg):
     serv.send(message)
 
 #sequence to help a user login to the server.
+
 def login():
+    global loggedIn
+    global sessionID
+    global secnum
     attemptcounter = 0
     if attemptcounter == 3:
         print('You have exceeded the amount of allowed attempts. Please wait 5 minutes before')
@@ -56,7 +60,7 @@ def login():
         username = input('')
         send(f"3 {username}")
         if servmsg == 'False':
-            print(f"[SERVER]: Username, '{username}' does not exist. Please try again. Attempt {str(attemptcounter)}/3")
+            print(f"[SERVER]: \tUsername, '{username}' does not exist. Please try again. Attempt {str(attemptcounter)}/3")
             attemptcounter = attemptcounter + 1
             continue
         elif servmsg == 'True':
@@ -67,20 +71,25 @@ def login():
         password = input('')
         password = hasher(password)
         pwdattempts = pwdattempts + 1
-        send(f"2 {username} {password}")
+        send(f"1 {username} {password}")
         if servmsg:
             servmsg = str(servmsg)
             servmsg.split()
-            servmsg[0] = key
+            session = servmsg
         print("Please enter your security number ( 9 digit code)")
-    scgh
-        
-        
-        
-        
+        secnum = input('')
+        send(f"3 {username} {password} {secnum}")
+        sys.wait(1)
+        if servmsg:
+            servmsg = str(servmsg)
+            print(f"[Server]: \tSession #{servmsg}\n")
+            sessionID = servmsg
+            loggedIn = True
+            break
 
 
-
+#function that retains information from the client user regarding
+#the account, and then sends the queries provided in server protocol
 def createAccount():
     username = input("Please pick a unique username that you would like to link to your account.")
     send(f"3 {username}")
@@ -105,9 +114,26 @@ def createAccount():
                 continue
         send(f"2 {username} {password} {secnum}")
         if servmsg == 'True':
-            init()
+            break
         else:
             print(f"Failed, server returned {str(servmsg)}")
+
+def balance(session, secnum):
+    global servmsg
+    send(f"4 {session} {secnum}")
+    balance = servmsg
+    print("[Server]: \tYour balance is " + str(balance) + ".")
+    
+
+
+def deposit():
+    global loggedIn
+    global loginInfo
+    while loggedIn:
+        print("Hello, " + loggedIn[0] + ".\nHow much would you like to deposit? If you'd like to view your balance, type 'bal'.")
+        depositAmount = input('')
+        if depositAmount.lower() == 'bal':
+            balance
 
 
 def init():

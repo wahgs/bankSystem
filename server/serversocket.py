@@ -215,8 +215,8 @@ def bal(sesh, sec):
         cur.execute("SELECT bal FROM bankSystem WHERE secnum='" + sec + "';")
         balance = cur.fetchone()
         balance = strip(balance)
-        log(f"User: {sesh} requested balance, recieved: {balance}")
-        return f"User: {sesh} requested balance, recieved: {balance}"
+        log(f"Session: {sesh} requested balance, recieved: {balance}")
+        return balance
     else:
         return "error"
 
@@ -265,7 +265,7 @@ def msgHandler(mesg):
         password = msg[2]
         secnum = msg[3]
         if command == '1':
-            if verifyLogin(username):
+            if verifyLogin(username, password):
                 func = sessionCreator(username)
                 return(func)
             else:
@@ -276,17 +276,20 @@ def msgHandler(mesg):
         elif command == '2':
             var = userCreator(username, password, secnum)
             return(var)
-    elif int(msg[1]) == 4 or 5 or 6:
+    elif int(msg[0]) == 4:
         command = msg[1]
         usrcmd = msg[2]
         session = msg[3]
         secnum = msg[4]
         if command == '1':
-            withdrawal(session, secnum, usrcmd)
+            withd = withdrawal(session, secnum, usrcmd)
+            return withd
         elif command == '2':
-            bal(session, secnum)
+            balance = bal(session, secnum)
+            return balance
         elif command == '3':
-            deposit(session, usrcmd)
+            depo = deposit(session, usrcmd)
+            return depo
         else:
             return('error')
         #when ready add a transfer function.
