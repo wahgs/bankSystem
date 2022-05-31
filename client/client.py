@@ -133,7 +133,11 @@ def deposit():
         print("Hello, " + loggedIn[0] + ".\nHow much would you like to deposit? If you'd like to view your balance, type 'bal'.")
         depositAmount = input('')
         if depositAmount.lower() == 'bal':
-            balance
+            balance()
+            continue
+        elif int(depositAmount):
+            print("Okay, depositing the amount.")
+            
 
 
 def init():
