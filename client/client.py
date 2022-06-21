@@ -1,3 +1,4 @@
+from asyncio import wait_for
 from lib2to3.pgen2 import token
 import socket
 import hashlib
@@ -7,11 +8,13 @@ import sys
 header = 2048
 port = 3305
 format = 'UTF-8'
-serverip = socket.gethostbyname(socket.gethostbyname())
+serverip = socket.gethostbyname(socket.gethostname())
 addr = (serverip, port)
 serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 loggedIn = False
 session = ''
+secnum = ''
+
 
 def help():
     print('[HELP] : List of commands:')
@@ -30,6 +33,14 @@ def help():
 def hasher(inp):
     return(str(hashlib.sha256(str(inp)).encode(format)).hexdigest())
 
+def checkSession():
+    global session
+    if session == '':
+        return False
+    else:
+        return True
+
+
 #strips a message of commas, etc. In order to avoid injection, sloppiness, etc.
 def strip(param):
     paramstr = str(param)
@@ -37,8 +48,11 @@ def strip(param):
     answer = "".join(c for c in paramstr if c in PERMITTED_CHARS)
     return answer
 
+#deformats the messages incoming from the server
+def deformat(msg):
+    var = strip(str(msg(2048).decode(format)))
+    return var
 #variable to make it easier to find server message.
-servmsg = strip(str(serv.recv(2048).decode(format)))
 
 #sends a message to the server.
 def send(msg):
@@ -50,7 +64,7 @@ def send(msg):
 
 def login():
     global loggedIn
-    global sessionID
+    global session
     global secnum
     attemptcounter = 0
     if attemptcounter == 3:
@@ -70,24 +84,31 @@ def login():
         password = hasher(password)
         pwdattempts = pwdattempts + 1
         send(f"1 {username} {password}")
-        if servmsg:
+        if deformat(servmsg) == 'good':
             servmsg = str(servmsg)
             servmsg.split()
             session = servmsg
         print("Please enter your security number ( 9 digit code)")
         secnum = input('')
         send(f"3 {username} {password} {secnum}")
-        sys.wait(1)
-        if servmsg:
+        #the server will return 'good' and the session if it is good
+        #the server will return 'bad' and nothing else if the login information was invalid.
+        sys.wait(2)
+        smsg = serv.recv(2048)
+        smsg = deformat(smsg)
+        smsg.split('')
+        if smsg[0] == 'good':
             servmsg = str(servmsg)
             print(f"[Server]: \tSession #{servmsg}\n")
-            sessionID = servmsg
+            session = smsg[1]
             loggedIn = True
             break
-
+        elif smsg[0] == 'bad':
+            print("The server returned [" + str(smsg[0]) + "]. Please try again.")
 def deposit():
     global loggedIn
-    global loginInfo 
+    global session
+    global secnum
     while loggedIn:
         print("Hello, " + loggedIn[0] + ".\nHow much would you like to deposit? If you'd like to view your balance, type 'bal'.")
         depositAmount = input('')
@@ -95,6 +116,8 @@ def deposit():
             balance()
         else:
             depositAmount = int(depositAmount)
+
+
 
 
 #function that retains information from the client user regarding
@@ -132,12 +155,12 @@ def balance(session, secnum):
     send(f"4 {session} {secnum}")
     balance = servmsg
     print("[Server]: \tYour balance is " + str(balance) + ".")
-    
+
 
 
 def deposit():
     global loggedIn
-    global loginInfo
+    global session
     while loggedIn:
         print("Hello, " + loggedIn[0] + ".\nHow much would you like to deposit? If you'd like to view your balance, type 'bal'.")
         depositAmount = input('')
@@ -146,7 +169,36 @@ def deposit():
             continue
         elif int(depositAmount):
             print("Okay, depositing the amount.")
-            
+            #in protocol, 4 is to deposit, and we're going to send the session, then the amount. The secnum is not required as this could not be malicious act. :)
+            send(f"4 {session} {str(depositAmount)}")
+            sys.wait(2)
+            servmsg = serv.recv(2048)
+            #makes the message readable.
+            servmsg = deformat(servmsg)
+            #displays the message to the user.
+            print(f"[Server]: '{servmsg}'. ")
+            return None
+        #if the user did not enter an integer.
+        else:
+            print(f"[Client] Invalid Format, sending you to the menu.\n")
+            return None
+#end of function
+
+def withdrawal():
+    global session
+    global secnum
+    global loggedIn
+    if loggedIn:
+        while True:
+            bal = balance(session, secnum)
+            print("Please enter the amount that you would like to withdrawal from your account. You have $" + str(bal) + " in your account.")
+            withdrawalAmount = input('')
+            print("Okay, we're attempting to withdrawal $" + str(withdrawalAmount) + " from your account.")
+            send("5 " + str(session) + " " + str(secnum) + " " + str(withdrawalAmount))
+            print("Sent server message.")
+            servmsg = serv.recv(2048)
+            servmsg = deformat(servmsg)
+            print(f"[Server] : {servmsg}")
 
 
 def init():
@@ -154,42 +206,48 @@ def init():
     serv.connect(addr)
     print('Connected to: [' + str(addr) + '].')
     global loggedIn
-    global token
+    global session
     loggedIn = False
     started = False
-    checkSession() # this will check for a .txt file that will have a token that is the username that was last logged in with.
-    while not loggedIn:
-        print("Welcome to bankSystem! /n/nWould you like to:\nLogin(login)\nCreate an Account (create)\nHelp(help)")
-        initInput = input('')
-        initInput = initInput.lower()
-        #handles incorrect input through the while loop, not allowing incorrect queries to pass.
-        if initInput != 'login' or 'create' or 'help':
-            print("Wrong input, please try again with the queries: 'login', 'create', or 'help'.\n")
-            continue
-        #handles the correct inputs.
-        elif initInput is 'login' or 'create' or 'help' and not started:
-            started = True
-            if initInput is 'login':
-                login()
-            elif initInput is 'create':
-                createAccount()
-            elif initInput is 'help':
+    if not checkSession(): # this will check for a .txt file that will have a token that is the username that was last logged in with.
+        while not loggedIn:
+            print("\n\nWelcome to bankSystem!\nWould you like to:\n\tLogin(login)\n\tCreate an Account (create)\n\tHelp(help)")
+            initInput = input('')
+            initInput = initInput.lower()
+            if initInput == 'login' or 'create' or 'help' and not started:
+                started = True
+                if initInput == 'login':
+                    login()
+                elif initInput == 'create':
+                    createAccount()
+                elif initInput == 'help':
+                    help()
+            else:
+                print("Wrong input, please try again with the queries: 'login', 'create', or 'help'.\n")
+                continue
+    elif checkSession():
+        timesgone = 0
+        while loggedIn:
+            if timesgone == 0:
+                inp = input('What would you like to do?')
+            elif timesgone > 1:
+                inp = input('What else would you like to do? (help for commands).')
+            if inp == 'deposit':
+                deposit()
+                continue
+            elif inp == 'withdrawal':
+                withdrawal()
+                continue
+            elif inp == 'balance':
+                bal()
+                continue
+            elif inp == 'help':
                 help()
-    while loggedIn:
-        inp = input('What would you like to do?')
-        if inp == 'deposit':
-            deposit()
-        elif inp == 'withdrawal':
-            withdrawal()
-        elif inp == 'balance':
-            bal()
-        elif inp == 'help':
-            help()
-        elif inp == 'exit' or 'close' or 'disconnect' and token:
-            send("!DISCONNECT " + str(token))
-            break
-        else:
-            continue
+            elif inp == 'exit' or 'close' or 'disconnect' and checkSession():
+                send("!DISCONNECT " + str(session))
+                break
+            else:
+                continue
 
-
+#begins the program
 init() 
