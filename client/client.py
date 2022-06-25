@@ -57,7 +57,7 @@ def deformat(msg):
 #sends a message to the server.
 def send(msg):
     message = msg.encode(format)
-    message += b' ' * header - len(message)
+    message += b' ' + (header - len(message))
     serv.send(message)
 
 #sequence to help a user login to the server.
