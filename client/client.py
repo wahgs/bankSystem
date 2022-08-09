@@ -1,9 +1,11 @@
 from asyncio import wait_for
 from lib2to3.pgen2 import token
+from logging import exception
 import socket
+from time import sleep
 import hashlib
-import time
 import sys
+from xmlrpc.server import ServerHTMLDoc
 
 header = 2048
 port = 3305
@@ -57,7 +59,7 @@ def deformat(msg):
 #sends a message to the server.
 def send(msg):
     message = msg.encode(format)
-    message += b' ' + (header - len(message))
+    message += b' ' * (header - len(message))
     serv.send(message)
 
 #sequence to help a user login to the server.
@@ -66,6 +68,7 @@ def login():
     global loggedIn
     global session
     global secnum
+    global servmsg
     attemptcounter = 0
     if attemptcounter == 3:
         print('You have exceeded the amount of allowed attempts. Please wait 5 minutes before')
@@ -73,52 +76,48 @@ def login():
         print('Please enter your username')
         username = input('')
         send(f"3 {username}")
+        sleep(2)
+        servmsg = serv.recv(2048)
+        print(f"[recieved] {servmsg}.")
+        servmsg = strip(str(servmsg))
         if servmsg == 'False':
             print(f"[SERVER]: \tUsername, '{username}' does not exist. Please try again. Attempt {str(attemptcounter)}/3")
             attemptcounter = attemptcounter + 1
             continue
         elif servmsg == 'True':
-            print(f"Alright, please enter your password.")
+            print(f"Username Exists.\n\nPlease enter your password.")
             break
         password = input('')
         password = hasher(password)
         pwdattempts = pwdattempts + 1
         send(f"1 {username} {password}")
+        sleep(1)
+        servmsg = serv.recv(2048)
+        servmsg = strip(str(servmsg))
         if deformat(servmsg) == 'good':
+            print("Login accepted, generating sessionID")
             servmsg = str(servmsg)
             servmsg.split()
             session = servmsg
-        print("Please enter your security number ( 9 digit code)")
-        secnum = input('')
-        send(f"3 {username} {password} {secnum}")
+            print("Testing session ID...")
         #the server will return 'good' and the session if it is good
         #the server will return 'bad' and nothing else if the login information was invalid.
-        sys.wait(2)
-        smsg = serv.recv(2048)
-        smsg = deformat(smsg)
-        smsg.split('')
-        if smsg[0] == 'good':
-            servmsg = str(servmsg)
-            print(f"[Server]: \tSession #{servmsg}\n")
-            session = smsg[1]
+        send(f"7 {session} {username}")
+        sleep(1)
+        servmsg = serv.recv(2048)
+        servmsg = strip(servmsg)
+        if servmsg == 'Good':
+            print("Successfully logged in.")
+            global loggedIn
             loggedIn = True
-            break
-        elif smsg[0] == 'bad':
-            print("The server returned [" + str(smsg[0]) + "]. Please try again.")
-def deposit():
-    global loggedIn
-    global session
-    global secnum
-    while loggedIn:
-        print("Hello, " + loggedIn[0] + ".\nHow much would you like to deposit? If you'd like to view your balance, type 'bal'.")
-        depositAmount = input('')
-        if depositAmount.lower() == '':
-            balance()
+            init()
+        elif servmsg == 'Bad':
+            print('Failed to complete login sequence, resetting.')
+            global loggedIn
+            loggedIn = False
+            init()
         else:
-            depositAmount = int(depositAmount)
-
-
-
+            print("Server message uninterpreted, expected 'Good', or 'Bad', Received [" + str(servmsg_ + "]")
 
 #function that retains information from the client user regarding
 #the account, and then sends the queries provided in server protocol
@@ -169,7 +168,7 @@ def deposit():
             continue
         elif int(depositAmount):
             print("Okay, depositing the amount.")
-            #in protocol, 4 is to deposit, and we're going to send the session, then the amount. The secnum is not required as this could not be malicious act. :)
+            #in protocol, 4 is to deposit, and we're going to send the session, then the amount. The secnum is not required as this could not really be malicious act. :)
             send(f"4 {session} {str(depositAmount)}")
             sys.wait(2)
             servmsg = serv.recv(2048)
@@ -202,8 +201,15 @@ def withdrawal():
 
 
 def init():
-    print('attempting to connect.')
-    serv.connect(addr)
+    while True:
+        print('attempting to connect.')
+        try:
+            serv.connect(addr)
+            print('connected')
+            break
+        except Exception as e:
+            print(f"[{e}] , trying again.")
+            continue
     print('Connected to: [' + str(addr) + '].')
     global loggedIn
     global session

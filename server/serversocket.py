@@ -246,6 +246,13 @@ def deposit(sesh, secnum, amount):
             log(f"[FAILED]: Changing balance of {sesh} from {bal} to {check}.")
             return f"[FAILED]: Changing balance of {sesh} from {bal} to {check}."
 
+
+def sessionCheck(sesh, usr):
+    cur.execute("SELECT session FROM sessions WHERE username='" + usr + ";'")
+    sessionSent = cur.fetchone()
+    if str(sessionSent) == str(sesh):
+        return True
+    
 # ------------------------------
 
 messagesSent = 1
@@ -259,12 +266,13 @@ def msgHandler(mesg):
 #3 is checking if the username is available
 #4-7 take the previous sequence, with section one being command, section 2 being
 #usrcmd, section 3 being session, section 4 being secnum
-    if int(msg[0]) == 1 or 2 or 3:
+    if int(msg[0]) <= 3:
         command = msg[0]
         username = msg[1]
-        password = msg[2]
-        secnum = msg[3]
+       # password = msg[2]
+       # secnum = msg[3]
         if command == '1':
+            password = msg[2]
             if verifyLogin(username, password):
                 func = sessionCreator(username)
                 return(func)
@@ -274,24 +282,36 @@ def msgHandler(mesg):
             vUser = verifyUser(username)
             return(str(vUser))
         elif command == '2':
+            password = msg[2]
+            secnum = msg[3]
             var = userCreator(username, password, secnum)
             return(var)
-    elif int(msg[0]) == 4:
-        command = msg[1]
-        usrcmd = msg[2]
-        session = msg[3]
-        secnum = msg[4]
-        if command == '1':
-            withd = withdrawal(session, secnum, usrcmd)
+    elif int(msg[0]) >= 4:
+        command = msg[0]
+        session = msg[1]
+       # usrcmd = msg[2]
+       # secnum = msg[3]
+       #4 is withdrawal
+       #5 is balance
+       #6 is deposit
+       #7 is session check.
+        if command == '4':
+            usercmd = msg[3]
+            secnum = msg[2]
+            withd = withdrawal(session, secnum, usercmd)
             return withd
-        elif command == '2':
+        elif command == '5':
+            secnum = msg[2]
             balance = bal(session, secnum)
             return balance
-        elif command == '3':
-            depo = deposit(session, usrcmd)
+        elif command == '6':
+            usercmd = msg[2]
+            depo = deposit(session, usercmd)
             return depo
         else:
             return('error')
+        elif command == '7':
+            sessionCheck(session, usrcmd)
         #when ready add a transfer function.
     elif msg[1] == disconnect_message:
         if sessionEnder(msg[2]):
@@ -309,7 +329,7 @@ def handle_client(connection, address):
             msg = connection.recv(header).decode(format)
             log(f"[{address}]: '{str(msg)}'")
             msg = msg.rstrip()
-            print("stripped: ..." + msg + "....")
+            print("stripped: ...'" + msg + "'...")
             h = msgHandler(msg)
             connection.send(bytes(h.encode(format)))
             log(f'[{str(address)}]: sent: "{msg}" | returned:"{str(h)}"')
@@ -318,6 +338,16 @@ def handle_client(connection, address):
             continue
     connection.close()
 
+def mariacheck():
+    try:
+        cur.execute("SHOW TABLES;")
+        print("Successfully connected to the mariaDB Instance.")
+    except e:
+        print("Could not connect to the MariaDB Server. Please make sure that the server is running.")
+        print("If you do not have the MariaDB Server running locally on this machine in docker,")
+        print("Please download the docker image at https://www.dockerhub.com/ ***PLS FILL IN")
+        print("And run with the volume displayed here: GOOGLE DRIVE LINK WITH THE VOLUME FOR THE MARIADB IMAGE")
+    
 
 #starts the server
 def start():
@@ -326,6 +356,8 @@ def start():
     #listens for connections
     s.listen()
     log(f"Server is listening on '{str(server)}:{str(port)}'.")
+    print('Checking for MariaDB Server...')
+    mariacheck()
     while True:
         conn, addr = s.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))

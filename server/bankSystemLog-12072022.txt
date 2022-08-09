@@ -1,0 +1,15 @@
+
+Server is listening on '172.20.64.1:3305'.
+[new connection]: ('172.20.64.1', 55113) has connected.
+[connections] : 1
+[('172.20.64.1', 55113)]: ''
+Server is listening on '172.20.64.1:3305'.
+[new connection]: ('172.20.64.1', 60755) has connected.
+[connections] : 1
+[('172.20.64.1', 60755)]: '3 grizhe                                                        '
+Server is listening on '172.20.64.1:3305'.
+[new connection]: ('172.20.64.1', 60870) has connected.
+[connections] : 1
+Server is listening on '172.20.64.1:3305'.
+[new connection]: ('172.20.64.1', 60908) has connected.
+[connections] : 1

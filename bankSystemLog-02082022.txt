@@ -1,0 +1,6 @@
+
+Server is listening on '192.168.56.1:3305'.
+[new connection]: ('192.168.56.1', 60696) has connected.
+[connections] : 1
+[('192.168.56.1', 60696)]: '3 grizhe                                                        '
+[('192.168.56.1', 60696)]: sent: "3 grizhe" | returned:"False"
