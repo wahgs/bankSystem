@@ -76,7 +76,7 @@ def login():
         print('Please enter your username')
         username = input('')
         send(f"3 {username}")
-        sleep(2)
+        sleep(1)
         servmsg = serv.recv(2048)
         print(f"[recieved] {servmsg}.")
         servmsg = strip(str(servmsg))
@@ -104,20 +104,17 @@ def login():
         #the server will return 'bad' and nothing else if the login information was invalid.
         send(f"7 {session} {username}")
         sleep(1)
-        servmsg = serv.recv(2048)
-        servmsg = strip(servmsg)
+        servmsg = strip(serv.recv(2048))
         if servmsg == 'Good':
             print("Successfully logged in.")
-            global loggedIn
             loggedIn = True
-            init()
+            return True
         elif servmsg == 'Bad':
             print('Failed to complete login sequence, resetting.')
-            global loggedIn
             loggedIn = False
-            init()
+            return False
         else:
-            print("Server message uninterpreted, expected 'Good', or 'Bad', Received [" + str(servmsg_ + "]")
+            print(f"Server message uninterpreted, expected 'Good', or 'Bad', Received [{str(servmsg)}")
 
 #function that retains information from the client user regarding
 #the account, and then sends the queries provided in server protocol
@@ -256,4 +253,4 @@ def init():
                 continue
 
 #begins the program
-init() 
+init()

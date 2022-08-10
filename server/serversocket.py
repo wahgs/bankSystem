@@ -162,8 +162,12 @@ def verifyUser(usr):
     cur.execute("SELECT username FROM bankSystem WHERE username='" + usr + "';")
     usrcheck = cur.fetchone()
     if usrcheck == 'None':
+        print(
+            'usrcheck == None'
+        )
         return True
     if usrcheck != 'None':
+        print('usrcheck !+ None')
         return False
 
 #=============== COMPELTE CODE LINE ==========================================
@@ -279,6 +283,7 @@ def msgHandler(mesg):
             else:
                 return("Failed to verify username.")
         elif command == '3':
+            print('verifing username')
             vUser = verifyUser(username)
             return(str(vUser))
         elif command == '2':
@@ -308,10 +313,10 @@ def msgHandler(mesg):
             usercmd = msg[2]
             depo = deposit(session, usercmd)
             return depo
-        else:
-            return('error')
         elif command == '7':
             sessionCheck(session, usrcmd)
+        else:
+            return('error')
         #when ready add a transfer function.
     elif msg[1] == disconnect_message:
         if sessionEnder(msg[2]):
