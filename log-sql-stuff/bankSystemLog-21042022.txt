@@ -1,8 +1,0 @@
-Server is listening on '172.23.0.1:3305'.[connections] : 1
-Server is listening on '172.23.0.1:3305'.
-[connections] : 1
-[connections] : 1
-Server is listening on '172.23.0.1:3305'.
-Server is listening on '172.23.0.1:3305'.
-[new connection]: ('172.23.0.1', 62090) has connected.
-[connections] : 1

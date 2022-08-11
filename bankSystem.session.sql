@@ -1,1 +1,0 @@
-SHOW username FROM bankSystem where secnum=123123123

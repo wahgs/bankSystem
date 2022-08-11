@@ -1,8 +1,0 @@
-
-Server is listening on '192.168.56.1:3305'.
-[new connection]: ('192.168.56.1', 63656) has connected.
-[connections] : 1
-[('192.168.56.1', 63656)]: '1 hello sir 56789'
-[('192.168.56.1', 63656)]: sent: "1 hello sir 56789" | returned:"Failed to verify username."
-[new connection]: ('192.168.56.1', 63812) has connected.
-[connections] : 1

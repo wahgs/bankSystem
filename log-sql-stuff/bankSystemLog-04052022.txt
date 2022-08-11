@@ -1,3 +1,0 @@
-
-Server is listening on '192.168.56.1:3305'.
-[connections] : 1 ('192.168.56.1', 49540) has connected.
