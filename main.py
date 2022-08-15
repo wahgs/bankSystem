@@ -1,5 +1,6 @@
 import re
 from flask import Flask, redirect, url_for, render_template, request
+from mariadbTestermariaCheck, import mariaCheck
 import sys
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ def home():
 def login():
     if request.method == "POST":
         user = request.form['nm']
+        if 
         return redirect(url_for("user", usr=user))
     else:
         return render_template("login.html")
@@ -33,3 +35,5 @@ def user(usr):
 
 if __name__ == '__main__': 
     app.run(debug=True)
+
+    This is where i decide that im going to make a sad tik 
