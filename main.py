@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request
 import sys
 import mariadb
 import hashlib
+import random
 
 
 #default mariadb info----------------------------
@@ -23,6 +24,37 @@ cur = conn.cursor()
 #hashes provided string to sha256
 def hasher(inp):
     return(str(hashlib.sha256(str(inp)).encode('UTF-8')).hexdigest())
+
+
+def sessionCreator(username):
+    counter = 0
+    session = ''
+    attempts = 1
+    working = True
+    while working:
+        if counter < 9:
+            num = random.randint(0, 9)
+            session = session + str(num)
+            counter = counter + 1
+            continue
+        if counter == 9:
+            cur.execute("SELECT sessionID FROM sessions WHERE sessionID=" + session)
+            seshchecker = cur.fetchone()
+            seshchecker = str(seshchecker)
+            print(f"seshchecker: {seshchecker}")
+            if seshchecker != 'None':
+                attempts = attempts + 1
+                session = ''
+                counter = 0
+                continue
+            elif seshchecker == 'None':
+                sql = "INSERT INTO sessions (sessionID, username) VALUES (?, ?)"
+                data = (session, username)
+                cur.execute(sql, data)
+                conn.commit()
+                print(f"commited, {data}. It took {attempts} attempts.")
+                break
+
 
 #
 def mariaContentChecker():
@@ -147,7 +179,10 @@ def loginp(usernm):
         elif request.method == "POST":
             passwd = request.form['pwd']
             passhashed = hasher(passwd)
-            cur.execute("SHOW username FROM accounts WHERE password='" + passhashed"';")
+            cur.execute("SHOW username FROM accounts WHERE password='" + passhashed + "';")
             returneduser = cur.fetchone()
             if returneduser == usernm:
-                return 
+                sessionCreator()
+                return redirect(url_for("dash", session))
+            elif returneduser != usernm:
+                return render_template("")
