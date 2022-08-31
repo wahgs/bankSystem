@@ -26,6 +26,7 @@ def mariaCheck():
             )
             connected = True
             var = False
+            cur = conn.cursor()
         except Exception as e:
             print("MariaDB connection not default. Server error message below\n" + e)
         print("Attmpted Credentials below.")
@@ -62,5 +63,5 @@ def mariaCheck():
             elif inp.lower() == 'exit' or 'try again':
                 break
 
-cur = conn.cursor()
+
     
