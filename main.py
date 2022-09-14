@@ -6,18 +6,24 @@ import random
 
 
 #default mariadb info----------------------------
-user="root",
-password="a",
-host="localhost",
-port=3306,
+user="root"
+password="a"
+host="localhost"
+port=3306
 database='accounts'
-conn = mariadb.connect(
-    user=user,
-    password=password,
-    host=host,
-    port=port,
-    database=database
-)
+try:
+    conn = mariadb.connect(
+        user=user,
+        password=password,
+        host=host,
+        port=port,
+        database=database
+    )
+    print("Maria successfully ")
+except Exception as e:
+    print("Exception: " + str(e) + "Probably caused by the server not being setup. Please run mariaFormatter.py to format your mariaDB server in docker.")
+    quit()
+
 cur = conn.cursor()
 #end mariadb info---------------------------
 

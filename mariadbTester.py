@@ -1,4 +1,5 @@
 import mariadb
+from time import sleep
 
 print("This function is designed to ensure that the mariaDB connection is stable, before deploying the webapp.")
 conn = None
@@ -14,6 +15,7 @@ def statement(arg):
 
 def mariaCheck():
     global conn, connected, user, password, host, port, database
+    #var turns false when the connection credentials are true
     var = True
     while var:
         try:
@@ -62,6 +64,15 @@ def mariaCheck():
                 continue
             elif inp.lower() == 'exit' or 'try again':
                 break
-
-
-    
+    if not var:
+        print("Do you give this program permission to reformat the mariaDB instance that you have connected it to?\nThis means that all of the data currently stored on said instance will be permanently deleted.")
+        inp = input("[y/n]: ")
+        if inp.lower() == 'y':
+            while True:
+                
+                print('wip')
+        elif inp.lower() == 'n':
+            print("Okay, quitting program. Please prepare your database so it can be foramtted accordingly before proceeding.")
+            sleep(5)
+            quit()
+        

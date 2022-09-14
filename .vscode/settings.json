@@ -25,6 +25,19 @@
             "database": "accounts",
             "username": "root",
             "password": "a"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "askForPassword": true,
+            "driver": "MariaDB",
+            "name": "mariadbLocal",
+            "database": "accounts",
+            "username": "root"
         }
     ]
 }
