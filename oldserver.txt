@@ -1,3 +1,7 @@
+----------------------- THIS WAS SAVED SO I CAN REFER TO IT LATER TO SEE HOW I MADE THINGS WORK LOL ----------------------------------
+
+
+
 from genericpath import exists
 import hashlib
 from ssl import SSLSession

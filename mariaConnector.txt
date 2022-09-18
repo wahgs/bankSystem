@@ -1,0 +1,4 @@
+The purpose of the mariaConnector() function in main.py is to first establish a connection to a mariaDB docker instance that is either locally or globally hosted,
+utilizing default, or user-defined credentials. From here the mariaDB connection will ask the user if there is already a specific database on the server that
+they would like the program to utilize, depedning on user query, the program can wipe the current database and format it properly for use, or create a new database in the server
+with either the default database name 'bankSys' or a user-defined database name.
