@@ -1,1 +1,0 @@
-#stores view / url endpoints
