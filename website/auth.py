@@ -45,6 +45,8 @@ def sign_up():
             flash('Email already exists.', category='error')
         if len(email) < 4:
             flash('Email must be greater than 4 characters.', category='error')
+        if email[:-4] != '.com':
+            flash('email must end in .com')
         elif len(first_name) <2:
             flash('first name needs to be longer than 2 chars.', category='error')
         elif password1 != password2:
@@ -57,7 +59,7 @@ def sign_up():
             db.session.add(new_user)
             db.session.commit()
             flash('Account Created!', category='success')
-            login_user(user, remember=True)
-            return redirect(url_for('views.home'))
+            flash('Please login.', category='success')
+            return redirect(url_for('auth.login'))
         
     return render_template("sign_up.html", user=current_user)

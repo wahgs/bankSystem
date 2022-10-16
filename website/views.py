@@ -27,4 +27,4 @@ def home():
         #for returns
         pass
     else:
-        return render_template("home.html")
+        return render_template("home.html", firstName=current_user.first_name, user=current_user)
