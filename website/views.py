@@ -12,7 +12,11 @@ views = Blueprint('views', __name__)
 
 @views.route("/")
 def duh():
-    return redirect(url_for('auth.login'))
+    #if the user's alr logged in, takes them to home, otherwise takes them to login
+    if current_user.is_authenticated:
+        return redirect(url_for('views.home'))
+    else:
+        return redirect(url_for('auth.login'))
 
 
 
