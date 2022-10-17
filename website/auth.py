@@ -4,8 +4,16 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+import random
 
 auth = Blueprint('auth', __name__)
+
+#generates a number between 1-10000
+#used to generate a fake balance for new accounts.
+def genbal():
+    balance = random.randint(1,10000)
+    return balance
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -39,6 +47,8 @@ def sign_up():
         first_name = request.form.get('first_name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        genbal()
+        print(f"Generated balance for {email} : ")
         #grabs username from db if it exists
         user = User.query.filter_by(email=email).first()
         if user:

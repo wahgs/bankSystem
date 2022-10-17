@@ -6,6 +6,7 @@ from .models import Note, User
 from . import db
 import json
 import jsonify
+import random
 
 
 views = Blueprint('views', __name__)
@@ -26,5 +27,17 @@ def home():
     if request.method == 'POST':
         #for returns
         pass
+    
     else:
-        return render_template("home.html", firstName=current_user.first_name, user=current_user)
+        #if the user has a balance set.
+        if current_user.balance:
+            return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
+        #if the user does not have a balance
+        elif not current_user.balance:
+            #creates a balance and assigns it to the current user.
+            balance = random.randint(1,10000)
+            current_user.balance = balance
+            db.session.commit()
+            return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
+            
+            
