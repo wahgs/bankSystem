@@ -28,8 +28,8 @@ def login():
                 login_user(user, remember=True)
 
                 return redirect(url_for('views.home'))
-            else:
-                flash('Incorrect password, try again.', category='error')
+        else:
+            flash('Incorrect password, try again.', category='error')
             
     return render_template('login.html', user=current_user)
     
@@ -55,8 +55,6 @@ def sign_up():
             flash('Email already exists.', category='error')
         if len(email) < 4:
             flash('Email must be greater than 4 characters.', category='error')
-        if email[:-4] != '.com':
-            flash('email must end in .com')
         elif len(first_name) <2:
             flash('first name needs to be longer than 2 chars.', category='error')
         elif password1 != password2:

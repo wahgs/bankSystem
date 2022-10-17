@@ -6,7 +6,7 @@ from flask_login import LoginManager
 
 #inits internal database >:)
 db = SQLAlchemy()
-DB_NAME = "database.db"
+DB_NAME = "database1.db"
 
 def create_app():
     app = Flask(__name__)
@@ -14,7 +14,6 @@ def create_app():
     app.config['SECRET_KEY'] = 'ballinorwhatever'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
-
 
     #registers blueprints
     from .views import views
@@ -32,14 +31,13 @@ def create_app():
     #where should flask redirect us if the users not logged in and the login is required.
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
-    
+
     from .models import User
     @login_manager.user_loader
     def load_user(id):
         #tells flask how we load a user
         #user.query.get uses the primary key.
         return User.query.get(int(id))
-
     return app
 
 

@@ -2,11 +2,12 @@
 from unicodedata import category
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note, User
+from .models import User
 from . import db
 import json
 import jsonify
 import random
+
 
 
 views = Blueprint('views', __name__)
@@ -14,6 +15,8 @@ views = Blueprint('views', __name__)
 @views.route("/")
 def duh():
     #if the user's alr logged in, takes them to home, otherwise takes them to login
+    #checks if the users balance has been set.
+    #if the user has a balance set.
     if current_user.is_authenticated:
         return redirect(url_for('views.home'))
     else:
@@ -39,5 +42,3 @@ def home():
             current_user.balance = balance
             db.session.commit()
             return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
-            
-            
