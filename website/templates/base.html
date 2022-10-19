@@ -35,10 +35,11 @@
           {% else %}
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
-          {% endif %}          
-          <a class="nav-item" id="ltv-logo"><img src="ltv-logo-white.png"/></div>
-      </div>
-    </nav>
+          {% endif %}
+          <img align="center" src="ltv-logo-white.png" width="35" height="35"/>
+        </div>
+    </div>
+      </nav>
 
     <!-- allows backend to flash messages.-->
     {% with messages = get_flashed_messages(with_categories=true) %}

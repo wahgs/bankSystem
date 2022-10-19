@@ -42,3 +42,17 @@ def home():
             current_user.balance = balance
             db.session.commit()
             return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
+
+@views.route("/withdrawal", methods=['GET', 'POST'])
+@login_required
+def withdrawal():
+    if request.method == 'POST':
+        bal = current_user.balance
+        amount = request.form.get('amount')
+        if int(amount) <= bal:
+            current_user.balance = bal - int(amount)
+            flash(f"Withdrew {str(amount)} from your balance of {str(bal)}!", category="success")
+            return redirect(url_for("views.home"))
+
+    else:
+        return render_template("withdrawal.html")

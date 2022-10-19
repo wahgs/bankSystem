@@ -1,0 +1,13 @@
+{% extends base.html %} {% blocktitle %} Withdrawal {% endblock %}
+{% block content %}
+</div>
+<head align="center"> Your balance is ${ bal }. How much would you like to withdrawal?</head>
+</br></br>
+<div class="form-group" align="center">
+    <label for="amount">Amount</label>
+    <input type="amount" class="form-control" id="amount" name="amount" placeholder="Amount to withdrawal"/>
+</div>
+</br>
+<div align="center">
+<button type="submit" class="btn btn-primary">Withdrawal</button></div>
+{% endblock %}
