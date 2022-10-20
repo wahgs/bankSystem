@@ -32,12 +32,16 @@
           {% if user.is_authenticated %}
           <a class="nav-item nav-link" id="home" href="/">Home</a>
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+          <a class="nav-item nav-link" id="withdrawal" href="/withdrawal">Withdrawal</a>
+          <a class="nav-item nav-link" id="deposit" href="/deposit">Deposit</a>
           {% else %}
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           {% endif %}
+          
         </div>
     </div>
+    <img align="center" src="static/ltv-logo-white.png" width="35" height="35"/>
     <img align="center" src="/static/ltv-logo-white.png" width="35" height="35"/>
     </nav>
 
@@ -59,10 +63,11 @@
       {% endfor %}
     {% endif %}
     {% endwith %}
-
+    
     <div class="container">
+      <body style="background-color:rgb(44, 55, 85)">
     {% block content %}
-    {% endblock %}</div>
+    {% endblock %}</body></div>
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

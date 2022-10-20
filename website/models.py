@@ -1,5 +1,4 @@
 #holds database models
-#holds Users and Balance
 from .  import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func

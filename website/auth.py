@@ -71,3 +71,28 @@ def sign_up():
             return redirect(url_for('auth.login'))
         
     return render_template("sign_up.html", user=current_user)
+
+@auth.route("/withdrawalPasswordRequired", methods = ['GET', 'POST'])
+@login_required
+def passwordRequired():
+    amount = request.args['amount']
+    if request.method == 'GET':
+        bal = current_user.balance
+        newbal = str(int(bal) - int(amount))
+        if int(newbal) >=1000:
+            bool = True
+        else:
+            bool = False
+        return render_template("passreqd.html", amount=amount, user=current_user, bool=bool)
+    elif request.method == 'POST':
+        #fill once HTML file is completed.
+        password = request.form.get('password')
+        bal = current_user.balance
+        if check_password_hash(current_user.password, password):
+            newbal = int(bal) - int(amount)
+            current_user.balance = newbal
+            db.session.commit()
+            flash(f"You balance has been updated to {str(newbal)} Redirecting to home...", category="success")
+            return redirect(url_for("views.home"))
+        else:
+            flash(f"Incorrect password. Please try again.", category="error")

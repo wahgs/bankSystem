@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %} Withdrawal {% endblock %}
+{% block content %}
+</div>
+</br>
+</br>
+</br>
+<head align="center"><title style="color: greenyellow;">{{ bal }}</title> - <title style="color: crimson;">{{ amount }}</title></head>
+<head align="center"><title style="color:yellow">{{ newbal }}</title></head>
+<head align="center"><title>If you like to withdrawal ${{ amount }}, please submit your password</title></head>
+<div>
+    {% if bool == True %}
+    <p align="center" style="color:rgb(73, 73, 73)">This password is required because the requested withdrawal amount makes your balance below $1,000.</p>
+    {% else %}
+    <p align="center" style="color:rgb(73, 73, 73)">*This password is requried because the requested withdrawal amount surpasses $500.</p>
+    {% endif %}
+</div>
+</br></br>
+<form method="POST">
+<div class="form-group" align="center">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" name="password" placeholder="Password"/>
+</div>
+</br>
+<div>
+    </div>
+</div>
+</br>
+<div align="center">
+<button type="submit" class="btn btn-primary">Submit</button></div>
+</form>
+{% endblock %}
