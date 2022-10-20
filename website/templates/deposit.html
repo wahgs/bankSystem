@@ -1,0 +1,19 @@
+{% extends "base.html" %} {% block title %} Deposit {% endblock %}
+{% block content %}
+</div>
+<head align="center"> Your balance is ${{ bal }}. How much would you like to deposit?</head>
+</br></br>
+<form method="POST">
+<div class="form-group" align="center">
+    <label for="amount">Amount</label>
+    <input type="amount" class="form-control" id="amount" name="amount" placeholder="Amount to deposit"/>
+</div>
+</br>
+<div>
+    </div>
+</div>
+</br>
+<div align="center">
+<button type="submit" class="btn btn-primary">Deposit</button></div>
+</form>
+{% endblock %}
