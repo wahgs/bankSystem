@@ -4,7 +4,7 @@ from os import path
 #tells flask we have logins
 from flask_login import LoginManager
 
-#inits internal database >:)
+#inits internal database >:)d
 db = SQLAlchemy()
 DB_NAME = "database1.db"
 
