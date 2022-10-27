@@ -68,3 +68,5 @@ def deposit():
         return redirect(url_for('views.home'))
     else:
         return render_template("deposit.html", bal=current_user.balance, name=current_user.first_name, user=current_user)
+
+@views.route("/settings", methods=['GET', 'POST'])
