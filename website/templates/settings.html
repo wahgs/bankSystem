@@ -1,0 +1,23 @@
+{% extends "base.html"%} {% block title %} Settings {% endblock %}
+{% block content %}
+<div><title>Settings</title>
+    <form>
+        <input type="button" name="darkOrLightBtn" value="Start machine"/>
+      </form>
+      <script>
+        //hehe javascript fun
+        const button = document.querySelector('input');
+        const paragraph = document.querySelector('p');
+        //runs updateButton once the button is clicked
+        button.addEventListener('click', updateButton);
+        //changes the button text from light mode -> dark mode && vice versa
+        function updateButton() {
+            if (button.value === 'Light Mode') {button.value = 'Dark Mode';
+        paragraph.textContent = 'The Application is in Dark Mode.';}
+            else if (button.value === 'Dark Mode') {button.value = 'Light Mode';
+        paragraph.textContent = 'The Application is in Light Mode.';}
+        }
+      </script>
+      <p>The machine is stopped.</p>
+      
+</div>
