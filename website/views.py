@@ -70,3 +70,7 @@ def deposit():
         return render_template("deposit.html", bal=current_user.balance, name=current_user.first_name, user=current_user)
 
 @views.route("/settings", methods=['GET', 'POST'])
+def settings():
+    if request.method == 'POST':
+        #determines which button was clicked lol
+        if ''

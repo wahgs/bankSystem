@@ -65,7 +65,10 @@
     {% endwith %}
     
     <div class="container">
+      {% if user.mode == 'dark' %}
       <body style="background-color:rgb(44, 55, 85)">
+      {% else %}
+      <body style="background-color:rgba(215, 218, 255, 0.671)"
     {% block content %}
     {% endblock %}</body></div>
     <script

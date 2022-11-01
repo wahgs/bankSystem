@@ -6,7 +6,7 @@ from flask_login import LoginManager
 
 #inits internal database >:)d
 db = SQLAlchemy()
-DB_NAME = "database1.db"
+DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
