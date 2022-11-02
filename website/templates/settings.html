@@ -1,15 +1,15 @@
-{% extends "base.html %} {% block title %} settings {% endblock %}
+{% extends "base.html %} {% block title %} Settings {% endblock %}
 {% block content %}
-<div>
-    <title>Settings</title>
-    <header >Settings</header>
-    <form method="POST" >
-        <button type="submit" id="form" value="darkMode" class="btn btn-primary">Dark Mode</button>
-    </br>
-    </br>
-    <button type="submit" id="form" value="lightMode" class="btn btn-primary">Light Mode</button>
-</br></br>
-    <button type="submit" id="form" value="removeAccount" class="btn btn-primary">Remove Account</button>
-</form>
-</div>
+    <div>
+        <title>Settings</title>
+        <header >Settings</header>
+        <form method="POST">
+            <button type="submit" id="form" value="darkMode" class="btn btn-primary">Dark Mode</button>
+        </br>
+        </br>
+        <button type="submit" id="form" value="lightMode" class="btn btn-primary">Light Mode</button>
+    </br></br>
+        <button type="submit" id="form" value="removeAccount" class="btn btn-primary">Remove Account</button>
+    </form>
+    </div>
 {% endblock %}
