@@ -15,8 +15,10 @@ views = Blueprint('views', __name__)
 #blueprint function to render templates
 #this function will return the template with any information any of the templates need.
 def render(var):
-    return render_template(str(var), firstName=current_user.first_name, user=current_user, balance=current_user.balance, auth=current_user.is_authenticated, mode=current_user.mode)
-
+    if current_user.is_authenticated:
+        return render_template(str(var), firstName=current_user.first_name, user=current_user, balance=current_user.balance, auth=current_user.is_authenticated, mode=current_user.mode)
+    else:
+        return render_template(str(var))
 
 
 @views.route("/")

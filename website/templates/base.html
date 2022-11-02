@@ -66,14 +66,10 @@
     {% endif %}
     {% endwith %}
       <!--defaults to light mode under current config-->
-      {% if mode == 'dark' %}
-      <div class="container">
-      <body style="background-color:rgb(44, 55, 85)">
-        {% block content %}
-        {% endblock %} </body></div>
-      {% else %}
       <div class="container">
       <body style="background-color:rgba(215, 218, 255, 0.671)">
+      {% if mode == 'dark' %}
+      <body style="background-color:rgb(44, 55, 85)">
         {% block content %}
         {% endblock %}
       </body></div>
