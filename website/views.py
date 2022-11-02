@@ -12,6 +12,13 @@ from time import sleep
 
 views = Blueprint('views', __name__)
 
+#blueprint function to render templates
+#this function will return the template with any information any of the templates need.
+def render(var):
+    return render_template(str(var), firstName=current_user.first_name, user=current_user, balance=current_user.balance, auth=current_user.is_authenticated, mode=current_user.mode)
+
+
+
 @views.route("/")
 def duh():
     #if the user's alr logged in, takes them to home, otherwise takes them to login
@@ -28,14 +35,14 @@ def duh():
 @login_required 
 def home():
     if current_user.balance:
-        return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
+        return render("home.html")
     #if the user does not have a balance
     elif not current_user.balance:
         #references auth.py's function genbal
         balance = genbal
         current_user.balance = balance
         db.session.commit()
-        return render_template("home.html", firstName=current_user.first_name, user=current_user, balance=current_user.balance)
+        return render("home.html")
 
 @views.route("/withdrawal", methods=['GET', 'POST'])
 @login_required
@@ -53,7 +60,7 @@ def withdrawal():
             return redirect(url_for("views.home"))
     #get method response
     else:
-        return render_template("withdrawal.html", bal=current_user.balance, name=current_user.first_name, auth=current_user.is_authenticated, user=current_user)
+        return render("withdrawal.html")
 
 @views.route("/deposit", methods=['GET', 'POST'])
 @login_required
@@ -67,10 +74,56 @@ def deposit():
         flash(f"You have successfully added ${str(amount)} to your balance", category="success")
         return redirect(url_for('views.home'))
     else:
-        return render_template("deposit.html", bal=current_user.balance, name=current_user.first_name, user=current_user)
+        return render("deposit.html")
+
+@views.route("/removeAccount", methods=['GET', 'POST'])
+@login_required
+def removeAccount():
+    #working on later
+    if request.method == 'POST':
+        sentEmail = request.form.get('email')
+        if current_user.email == sentEmail:
+            name = current_user.name
+            db.session.query(User).filter(User.email == sentEmail).delete()
+            db.session.commit()
+            flash(f"The account for {name.title()} has been deleted!", category="error")
+            return redirect(url_for("auth.login"))
+        if current_user.email != sentEmail:
+            flash("Invalid Email Address, try again.")
+            return render("removeAccount.html")
+    else:
+        return render("removeAccount.html")
+
+
 
 @views.route("/settings", methods=['GET', 'POST'])
 def settings():
     if request.method == 'POST':
-        #determines which button was clicked lol
-        if ''
+        #determines which button was clicked
+        form = str(request.form.form).lower()
+        if form == 'lightmode' or form == 'darkmode' or 'removeaccount':
+            if form == 'lightmode':
+                try:
+                    current_user.mode = 'light'
+                    db.session.commit()
+                    flash('Switched to dark mode', category="success")
+                except Exception as e:
+                    flash(f'Error switching to dark mode: \'{e}\'', cagtegory="error")
+                    print(f'Exception in line 92 views.py: "{str(e)}"')
+                finally:
+                    return render("settings.html")
+            #attempts to create the current users mode to dark mode.
+            elif form == 'darkmode':
+                try:
+                    current_user.mode = 'dark'
+                    db.session.commit()
+                    flash('Switched to light mode', category="success")
+                except Exception as e:
+                    flash(f'Error switching to light mode: \'{e}\'', category="error")
+                    print(f'Exception in line 92 views.py: "{str(e)}"')
+                finally:
+                    return render("settings.html")
+            elif form == 'removeaccount':
+                return redirect(url_for("views.removeAccount"))
+    else:
+        return render("settings.html")

@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %} Remove Account {% end block %}
+{% block content %}
+<title align="center">Remove Account</title>
+<div align="center">
+    <head>Would you really like to remove your account, {% firstName %}?</head>
+    <textarea>If you would really like to remove your account, please type your username in the area below.</textarea>
+    <form method="POST">
+        <div class="form-group" align="center">
+            <label for="email">Type your email below</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="johndoe@example.com"/>
+        </div>
+        </br>
+        <div>
+            </div>
+        </div>
+        </br>
+        <div align="center">
+        <button type="submit" class="btn btn-primary">Remove Account</button></div>
+        </form>"
+    </form>
+</div>

@@ -34,9 +34,11 @@
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           <a class="nav-item nav-link" id="withdrawal" href="/withdrawal">Withdrawal</a>
           <a class="nav-item nav-link" id="deposit" href="/deposit">Deposit</a>
+          <a class="nav-item nav-link" id="settings" href="/settings"><img src="static/settings-gear.png" width="35" height="35"/></a>
           {% else %}
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
+          <a class="nav-item nav-link" id="settings" href="/settings"><img src="static/settings-gear.png" width="35" height="35"/></a>
           {% endif %}
           
         </div>
@@ -63,14 +65,19 @@
       {% endfor %}
     {% endif %}
     {% endwith %}
-    
-    <div class="container">
-      {% if user.mode == 'dark' %}
+      <!--defaults to light mode under current config-->
+      {% if mode == 'dark' %}
+      <div class="container">
       <body style="background-color:rgb(44, 55, 85)">
+        {% block content %}
+        {% endblock %} </body></div>
       {% else %}
-      <body style="background-color:rgba(215, 218, 255, 0.671)"
-    {% block content %}
-    {% endblock %}</body></div>
+      <div class="container">
+      <body style="background-color:rgba(215, 218, 255, 0.671)">
+        {% block content %}
+        {% endblock %}
+      </body></div>
+      {% endif %}
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
