@@ -16,9 +16,12 @@ views = Blueprint('views', __name__)
 #this function will return the template with any information any of the templates need.
 def render(var):
     if current_user.is_authenticated:
-        return render_template(str(var), firstName=current_user.first_name, user=current_user, balance=current_user.balance, auth=current_user.is_authenticated, mode=current_user.mode)
+        if not current_user.balance:
+            return render_template(str(var), firstName=current_user.first_name, user=current_user, auth=current_user.is_authenticated, mode=current_user.mode)
+        else:    
+            return render_template(str(var), firstName=current_user.first_name, user=current_user, balance=current_user.balance, auth=current_user.is_authenticated, mode=current_user.mode)
     else:
-        return render_template(str(var))
+        return render_template(str(var), auth=current_user.is_authenticated)
 
 
 @views.route("/")
@@ -39,12 +42,13 @@ def home():
     if current_user.balance:
         return render("home.html")
     #if the user does not have a balance
-    elif not current_user.balance:
+    else:
         #references auth.py's function genbal
-        balance = genbal
-        current_user.balance = balance
+        balance1 = genbal
+        current_user.balance = balance1
         db.session.commit()
         return render("home.html")
+
 
 @views.route("/withdrawal", methods=['GET', 'POST'])
 @login_required
