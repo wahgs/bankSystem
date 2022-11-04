@@ -39,8 +39,7 @@
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="settings" href="/settings"><img src="static/settings-gear.png" width="27" height="27"/></a>
-          {% endif %}
-          
+          {% endif %}          
         </div>
     </div align="center">
     <img src="static/ltv-logo-white.png" width="35" height="35"/>
@@ -64,20 +63,21 @@
       {% endfor %}
     {% endif %}
     {% endwith %}
-      <!--defaults to light mode / dark mode under user selection-->
-      <div class="container">
-        {% block content %}{% if auth and mode == 'dark' %}
-          <body style="background-color:rgb(44, 55, 85)"></body>
-        {% else %}
-        <body style="background-color:rgba(201, 255, 255, 0.878)"></body>
-        {% endif %}{% endblock %}
-      </div>
+    
+    <!--defaults to light mode / dark mode under user selection-->
+    <div class="container">
+      {% block content %}{% if current_user.is_authenticated and mode == 'dark' %}
+      <body style="background-color:rgb(44, 55, 85)"></body>
+      {% else %}
+      <body style="background-color:rgba(201, 255, 255, 0.878)"></body>
+      {% endif %}{% endblock %}
+    </div>
+    
       
-      
-      <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"
     ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
