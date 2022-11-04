@@ -16,6 +16,20 @@
         />
 
         <title>{% block title %}Home{% endblock %}</title>
+        <!--Styling allows for the body color to be switched according to the existance of the mode variable-->
+        {% if auth and current_user.mode == 'dark' %}
+        <style>
+          :root {
+            --body-color: "rgb(44, 55, 85)";
+          }
+        </style>
+        {% else %}
+        <style>
+          :root {
+            --body-color: "rgba(201, 255, 255, 0.878)"
+          }
+        </style>
+        {% endif %}
     </head>
      <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -66,11 +80,9 @@
     
     <!--defaults to light mode / dark mode under user selection-->
     <div class="container">
-      {% block content %}{% if current_user.is_authenticated and mode == 'dark' %}
-      <body style="background-color:rgb(44, 55, 85)"></body>
-      {% else %}
-      <body style="background-color:rgba(201, 255, 255, 0.878)"></body>
-      {% endif %}{% endblock %}
+      <body>
+        {% block content %}{% endblock %}
+      </body>
     </div>
     
       
