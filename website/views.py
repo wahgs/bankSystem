@@ -44,8 +44,7 @@ def home():
     #if the user does not have a balance
     else:
         #references auth.py's function genbal
-        balance1 = genbal
-        current_user.balance = balance1
+        current_user.balance = 0
         db.session.commit()
         return render("home.html")
 
@@ -101,35 +100,34 @@ def removeAccount():
         return render("removeAccount.html")
 
 
-
 @views.route("/settings", methods=['GET', 'POST'])
 def settings():
     if request.method == 'POST':
-        #determines which button was clicked
-        form = str(request.form.form).lower()
-        if form == 'lightmode' or form == 'darkmode' or 'removeaccount':
-            if form == 'lightmode':
-                try:
-                    current_user.mode = 'light'
-                    db.session.commit()
-                    flash('Switched to dark mode', category="success")
-                except Exception as e:
-                    flash(f'Error switching to dark mode: \'{e}\'', cagtegory="error")
-                    print(f'Exception in line 92 views.py: "{str(e)}"')
-                finally:
-                    return render("settings.html")
-            #attempts to create the current users mode to dark mode.
-            elif form == 'darkmode':
-                try:
-                    current_user.mode = 'dark'
-                    db.session.commit()
-                    flash('Switched to light mode', category="success")
-                except Exception as e:
-                    flash(f'Error switching to light mode: \'{e}\'', category="error")
-                    print(f'Exception in line 92 views.py: "{str(e)}"')
-                finally:
-                    return render("settings.html")
-            elif form == 'removeaccount':
-                return redirect(url_for("views.removeAccount"))
+        #based on what button was clicked, the user's setting will be adapted.
+        if request.form["darkMode"]:
+            try:
+                current_user.mode = 'dark'
+                db.session.commit()
+                flash('Switched to light mode', category="success")
+            except Exception as e:
+                flash(f'Error switching to light mode: \'{e}\'', category="error")
+                print(f'Exception in line 92 views.py: "{str(e)}"')
+            finally:
+                return render("settings.html")
+        if request.form["lightMode"]:
+            try:
+                current_user.mode = 'light'
+                db.session.commit()
+                flash('Switched to dark mode', category="success")
+            except Exception as e:
+                flash(f'Error switching to dark mode: \'{e}\'', cagtegory="error")
+                print(f'Exception in line 92 views.py: "{str(e)}"')
+            finally:
+                return render("settings.html")
+        elif request.form["removeAccount"] == 'removeaccount':
+            return redirect(url_for("views.removeAccount"))
+        else:
+            return render("settings.html")
+    #upon GET request, the html file is returned.
     else:
         return render("settings.html")

@@ -4,6 +4,12 @@ import time
 import sys
 ############################################ end imports
 
+
+app = create_app()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 logFileName="bankSystem-log"
 dtime = str(time.strftime("%Y-%m-%d--%H-%M-%S"))
 logName = str(logFileName + '-' + str(dtime) + '.txt')
@@ -16,9 +22,3 @@ def log(inp):
     f.write(msg)
     print(msg)
 log(f'Logging initialized @ \'{str(logName)}\'')
-
-
-app = create_app()
-
-if __name__ == '__main__':
-    app.run(debug=True)
