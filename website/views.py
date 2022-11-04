@@ -104,30 +104,33 @@ def removeAccount():
 def settings():
     if request.method == 'POST':
         #based on what button was clicked, the user's setting will be adapted.
-        if request.form["darkMode"]:
+        if "darkmode" in request.form:
             try:
                 current_user.mode = 'dark'
                 db.session.commit()
-                flash('Switched to light mode', category="success")
+                flash('Switched to dark mode', category="success")
             except Exception as e:
-                flash(f'Error switching to light mode: \'{e}\'', category="error")
+                flash(f'Error switching to dark mode: \'{e}\'', category="error")
                 print(f'Exception in line 92 views.py: "{str(e)}"')
             finally:
                 return render("settings.html")
-        if request.form["lightMode"]:
+        elif "lightmode" in request.form:
             try:
                 current_user.mode = 'light'
                 db.session.commit()
-                flash('Switched to dark mode', category="success")
+                flash('Switched to light mode', category="success")
             except Exception as e:
-                flash(f'Error switching to dark mode: \'{e}\'', cagtegory="error")
+                flash(f'Error switching to light mode: \'{e}\'', cagtegory="error")
                 print(f'Exception in line 92 views.py: "{str(e)}"')
             finally:
                 return render("settings.html")
-        elif request.form["removeAccount"] == 'removeaccount':
+        elif "removeaccount" in request.form:
             return redirect(url_for("views.removeAccount"))
         else:
-            return render("settings.html")
+            if current_user.is_authenticated:
+                return redirect(url_for('views.home'))
+            else:
+                return redirect(url_for('auth.signup'))
     #upon GET request, the html file is returned.
     else:
         return render("settings.html")
