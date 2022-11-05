@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_required, current_user
 from .models import User
 from .auth import genbal
-from . import db
+from . import db, log
 import json
 import jsonify
 import random
@@ -44,6 +44,7 @@ def home():
     #if the user does not have a balance
     else:
         #references auth.py's function genbal
+        balance = int(genbal())
         current_user.balance = 0
         db.session.commit()
         return render("home.html")
@@ -99,6 +100,11 @@ def removeAccount():
     else:
         return render("removeAccount.html")
 
+def settingsRedirect():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.home'))
+    else:
+        return redirect(url_for('auth.sign_up'))
 
 @views.route("/settings", methods=['GET', 'POST'])
 def settings():
@@ -113,7 +119,7 @@ def settings():
                 flash(f'Error switching to dark mode: \'{e}\'', category="error")
                 print(f'Exception in line 92 views.py: "{str(e)}"')
             finally:
-                return render("settings.html")
+                return settingsRedirect()
         elif "lightmode" in request.form:
             try:
                 current_user.mode = 'light'
@@ -123,14 +129,10 @@ def settings():
                 flash(f'Error switching to light mode: \'{e}\'', cagtegory="error")
                 print(f'Exception in line 92 views.py: "{str(e)}"')
             finally:
-                return render("settings.html")
-        elif "removeaccount" in request.form:
-            return redirect(url_for("views.removeAccount"))
-        else:
-            if current_user.is_authenticated:
-                return redirect(url_for('views.home'))
-            else:
-                return redirect(url_for('auth.signup'))
+                return settingsRedirect()
+        elif "removeAccount" in request.form:
+            return redirect(url_for('views.removeAccount'))
     #upon GET request, the html file is returned.
     else:
+        log(str(current_user.mode))
         return render("settings.html")

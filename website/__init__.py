@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from os import path
+import time
 #tells flask we have logins
 from flask_login import LoginManager
 
@@ -40,4 +41,18 @@ def create_app():
         return User.query.get(int(id))
     return app
 
+#logging----------------
+#base file name, logs\\ is the subdirectory in the github folder.
+logFileName="logs\\bankSystem-log"
+dtime = str(time.strftime("%Y-%m-%d--%H-%M-%S"))
+logName = str(logFileName + '-' + str(dtime) + '.txt')
+f=open(logName, "x")
+
+#logging sequence
+def log(inp):
+    dateAndTime = str(time.strftime("%Y-%m-%d--%H-%M-%S"))
+    msg = f'[Server] - {dateAndTime} - {inp}'
+    f.write(msg)
+    print(msg)
+log(f'Logging initialized @ \'{str(logName)}\'')
 

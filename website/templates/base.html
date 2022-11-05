@@ -14,24 +14,14 @@
           href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
           crossorigin="anonymous"
         />
-
-        <title>{% block title %}Home{% endblock %}</title>
-        <!--Styling allows for the body color to be switched according to the existance of the mode variable-->
-        {% if auth and current_user.mode == 'dark' %}
-        <style>
-          :root {
-            --body-color: "rgb(44, 55, 85)";
-          }
-        </style>
+        {% if mode == "dark" %}
+        <link rel="stylesheet" href="static/darkStyle.css"/>
         {% else %}
-        <style>
-          :root {
-            --body-color: "rgba(201, 255, 255, 0.878)"
-          }
-        </style>
+        <link rel="stylesheet" href="static/lightStyle.css"/>
         {% endif %}
+        <title>{% block title %}Home{% endblock %}</title>
     </head>
-     <body>
+    <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <button
         class="navbar-toggler"
@@ -58,7 +48,6 @@
     </div align="center">
     <img src="static/ltv-logo-white.png" width="35" height="35"/>
     </nav>
-
     <!-- allows backend to flash messages.-->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
